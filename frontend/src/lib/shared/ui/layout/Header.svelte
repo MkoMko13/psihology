@@ -2,8 +2,9 @@
 </script>
 
 <header
-  class="relative z-2
-      flex justify-center bg-accent-300 shadow-md shadow-black/25"
+  class="fixed z-2
+      flex justify-center w-full
+      bg-accent-300 shadow-md shadow-black/25"
 >
   <div
     class="
@@ -38,9 +39,13 @@
         class="
                 "
       >
-        <span class="font-bold text-xl uppercase"> Шеліган Наталія </span>
+        <span class="font-bold text-xl uppercase">
+          Сухачова Наталія
+        </span>
         <img src="" alt="" />
-        <span class="font-medium"> Клінічний психолог </span>
+        <span class="font-medium">
+          Клінічний психолог
+        </span>
       </div>
     </div>
 
