@@ -64,10 +64,13 @@ async function checkWidgetsImportRules() {
   const errors = [];
   for (const file of files) {
     const content = await readFile(file, 'utf8');
-    const importLines = content.split('\n').filter((line) => line.includes('import') || line.includes('from '));
+    const importLines = content
+      .split('\n')
+      .filter((line) => line.includes('import') || line.includes('from '));
 
     for (const line of importLines) {
-      const forbidden = line.includes("'$features") || line.includes('"$features') || line.includes('/features/');
+      const forbidden =
+        line.includes("'$features") || line.includes('"$features') || line.includes('/features/');
 
       if (forbidden) {
         errors.push(`widgets cannot import features: ${toPosix(path.relative(root, file))}`);
