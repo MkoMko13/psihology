@@ -64,6 +64,29 @@
 
     if (/^https?:\/\//i.test(value)) return value;
 
+    if (value.startsWith('./images/')) {
+      return `${base}/${value.slice(2)}`;
+    }
+
+    if (value.startsWith('images/')) {
+      return `${base}/${value}`;
+    }
+
+    if (base && value.startsWith(`${base.slice(1)}/`)) {
+      return `/${value}`;
+    }
+
+    if (value.match(/^[^/]+\/images\//i)) {
+      if (!base) {
+        const localPath = value.match(
+          /^[^/]+(\/images\/.*)$/i
+        )?.[1];
+        if (localPath) return localPath;
+      }
+
+      return `/${value}`;
+    }
+
     if (value.startsWith('/')) {
       if (base && value.startsWith(`${base}/`))
         return value;
