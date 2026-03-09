@@ -5,14 +5,29 @@
   import 'photoswipe/style.css';
 
   import {
+    type ProductGalleryFeatures,
     productGalleryFeatures,
     productGalleryItems,
     type GalleryItem,
   } from '$shared/config';
 
+  let {
+    items = productGalleryItems,
+    features = {},
+  }: {
+    items?: GalleryItem[];
+    features?: Partial<ProductGalleryFeatures>;
+  } = $props();
+
+  const galleryFeatures = $derived({
+    ...productGalleryFeatures,
+    ...features,
+  });
+
   let activeIndex = $state(0);
   let thumbsTrack = $state<HTMLDivElement | null>(null);
   let lightbox = $state<PhotoSwipeLightbox | null>(null);
+  let isMainScrollSpringPatched = false;
 
   let pointerStartX = 0;
   let pointerDeltaX = 0;
@@ -20,14 +35,14 @@
   let suppressClickOpen = false;
 
   const galleryCssVars = $derived(
-    `--gallery-max-width: ${productGalleryFeatures.galleryMaxWidthPx}px; ` +
-      `--gallery-gap: ${productGalleryFeatures.galleryGapPx}px; ` +
-      `--hero-aspect-ratio: ${productGalleryFeatures.heroAspectRatio}; ` +
-      `--hero-max-height: ${productGalleryFeatures.heroMaxHeightPx}px; ` +
-      `--thumb-min-width: ${productGalleryFeatures.thumbnailMinWidthPx}px; ` +
-      `--thumb-gap: ${productGalleryFeatures.thumbnailGapPx}px; ` +
-      `--thumb-aspect-ratio: ${productGalleryFeatures.thumbnailAspectRatio}; ` +
-      `--thumb-visible-count: ${Math.max(1, productGalleryFeatures.thumbnailsVisibleCount)};`
+    `--gallery-max-width: ${galleryFeatures.galleryMaxWidthPx}px; ` +
+      `--gallery-gap: ${galleryFeatures.galleryGapPx}px; ` +
+      `--hero-aspect-ratio: ${galleryFeatures.heroAspectRatio}; ` +
+      `--hero-max-height: ${galleryFeatures.heroMaxHeightPx}px; ` +
+      `--thumb-min-width: ${galleryFeatures.thumbnailMinWidthPx}px; ` +
+      `--thumb-gap: ${galleryFeatures.thumbnailGapPx}px; ` +
+      `--thumb-aspect-ratio: ${galleryFeatures.thumbnailAspectRatio}; ` +
+      `--thumb-visible-count: ${Math.max(1, galleryFeatures.thumbnailsVisibleCount)};`
   );
 
   function captionText(item: GalleryItem) {
@@ -49,7 +64,7 @@
   }
 
   const safeGalleryItems = $derived(
-    productGalleryItems.map((item) => ({
+    items.map((item) => ({
       ...item,
       src: safeImageSrc(item.src),
       thumbSrc: safeImageSrc(item.thumbSrc || item.src),
@@ -59,7 +74,7 @@
   const hasItems = $derived(safeGalleryItems.length > 0);
 
   function buildLightboxOptions(
-    features: typeof productGalleryFeatures
+    features: ProductGalleryFeatures
   ) {
     const zoomDisabledOverrides = features.zoom
       ? {}
@@ -160,7 +175,7 @@
 
     if (
       Math.abs(pointerDeltaX) >=
-      productGalleryFeatures.swipeThresholdPx
+      galleryFeatures.swipeThresholdPx
     ) {
       if (pointerDeltaX < 0) showNextOnPage();
       else showPrevOnPage();
@@ -179,9 +194,85 @@
     openModal(activeIndex);
   }
 
+  function animateModalSlideTransition() {
+    const slideImage = lightbox?.pswp?.currSlide?.content
+      ?.element as HTMLElement | undefined;
+    if (
+      !slideImage ||
+      galleryFeatures.modalSlideTransitionDurationMs <= 0
+    ) {
+      return;
+    }
+
+    slideImage.classList.remove(
+      'pswp-modal-slide-transition'
+    );
+    // Force reflow to restart CSS animation on each slide change.
+    void slideImage.getBoundingClientRect();
+    slideImage.classList.add('pswp-modal-slide-transition');
+  }
+
+  function patchModalMainScrollSpring() {
+    if (isMainScrollSpringPatched) return;
+
+    const pswp = lightbox?.pswp as
+      | {
+          animations?: {
+            startSpring?: (props: {
+              isMainScroll?: boolean;
+              naturalFrequency?: number;
+              [key: string]: unknown;
+            }) => unknown;
+          };
+        }
+      | undefined;
+
+    const animations = pswp?.animations;
+    const startSpring = animations?.startSpring;
+    if (!animations || !startSpring) return;
+
+    const originalStartSpring =
+      startSpring.bind(animations);
+
+    animations.startSpring = (props) => {
+      if (props?.isMainScroll) {
+        const durationMs = Math.max(
+          1,
+          galleryFeatures.modalSlideTransitionDurationMs
+        );
+        const naturalFrequency = Math.max(
+          4,
+          Math.min(30, 10000 / durationMs)
+        );
+
+        return originalStartSpring({
+          ...props,
+          naturalFrequency,
+        });
+      }
+
+      return originalStartSpring(props);
+    };
+
+    isMainScrollSpringPatched = true;
+  }
+
   $effect(() => {
-    if (!productGalleryFeatures.thumbnails) return;
+    if (!galleryFeatures.thumbnails) return;
     scrollThumbIntoView(activeIndex);
+  });
+
+  $effect(() => {
+    document.documentElement.style.setProperty(
+      '--pswp-modal-slide-transition-duration',
+      `${galleryFeatures.modalSlideTransitionDurationMs}ms`
+    );
+
+    return () => {
+      document.documentElement.style.removeProperty(
+        '--pswp-modal-slide-transition-duration'
+      );
+    };
   });
 
   onMount(() => {
@@ -194,15 +285,20 @@
       if (disposed) return;
 
       lightbox = new PhotoSwipeLightboxCtor(
-        buildLightboxOptions(productGalleryFeatures)
+        buildLightboxOptions(galleryFeatures)
       );
+
+      lightbox.on('afterInit', () => {
+        patchModalMainScrollSpring();
+      });
 
       lightbox.on('change', () => {
         const index = lightbox?.pswp?.currIndex;
         if (typeof index === 'number') activeIndex = index;
+        animateModalSlideTransition();
       });
 
-      if (productGalleryFeatures.caption) {
+      if (galleryFeatures.caption) {
         lightbox.on('uiRegister', () => {
           lightbox?.pswp?.ui?.registerElement({
             name: 'custom-caption',
@@ -225,7 +321,7 @@
         });
       }
 
-      if (productGalleryFeatures.fullscreen) {
+      if (galleryFeatures.fullscreen) {
         lightbox.on('uiRegister', () => {
           lightbox?.pswp?.ui?.registerElement({
             name: 'fullscreen-toggle',
@@ -246,7 +342,7 @@
         });
       }
 
-      if (productGalleryFeatures.thumbsInModal) {
+      if (galleryFeatures.thumbsInModal) {
         lightbox.on('uiRegister', () => {
           lightbox?.pswp?.ui?.registerElement({
             name: 'modal-thumbs',
@@ -317,9 +413,9 @@
   aria-label="Галерея товару"
   style={galleryCssVars}
 >
-  {#if productGalleryFeatures.heroPreview && hasItems}
+  {#if galleryFeatures.heroPreview && hasItems}
     <div class="hero-wrap">
-      {#if productGalleryFeatures.pageNavigation}
+      {#if galleryFeatures.pageNavigation}
         <button
           type="button"
           class="page-nav prev"
@@ -340,12 +436,12 @@
         onpointercancel={onHeroPointerUp}
         aria-label="Відкрити галерею в модальному вікні"
       >
-        {#if productGalleryFeatures.smoothHeroTransition}
+        {#if galleryFeatures.smoothHeroTransition}
           {#key activeIndex}
             <img
               transition:fade={{
                 duration:
-                  productGalleryFeatures.heroTransitionDurationMs,
+                  galleryFeatures.heroTransitionDurationMs,
               }}
               src={currentItem?.src}
               alt={currentItem?.alt ||
@@ -361,7 +457,7 @@
         {/if}
       </button>
 
-      {#if productGalleryFeatures.pageNavigation}
+      {#if galleryFeatures.pageNavigation}
         <button
           type="button"
           class="page-nav next"
@@ -374,7 +470,7 @@
     </div>
   {/if}
 
-  {#if productGalleryFeatures.thumbnails && hasItems}
+  {#if galleryFeatures.thumbnails && hasItems}
     <div class="thumb-strip-shell">
       <div class="thumb-track" bind:this={thumbsTrack}>
         {#each safeGalleryItems as item, index}
@@ -400,7 +496,10 @@
   {/if}
 </section>
 
-<style>
+<style lang="scss">
+  .pswp__modal-thumbs {
+    width: fit-content;
+  }
   .gallery-shell {
     width: min(var(--gallery-max-width), 100%);
     margin: 0 auto;
@@ -428,16 +527,16 @@
     box-shadow: 0 16px 30px rgba(15, 23, 42, 0.16);
     cursor: zoom-in;
     touch-action: pan-y;
-  }
 
-  .hero-image img {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    will-change: opacity;
+    img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: opacity;
+    }
   }
 
   .page-nav {
@@ -453,12 +552,17 @@
       transform 0.2s ease,
       box-shadow 0.2s ease,
       background 0.2s ease;
-  }
 
-  .page-nav:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 24px rgba(15, 23, 42, 0.2);
-    background: linear-gradient(180deg, #ffffff, #e6edff);
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(15, 23, 42, 0.2);
+      background: linear-gradient(180deg, #ffffff, #e6edff);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2f6fed;
+      outline-offset: 2px;
+    }
   }
 
   .thumb-strip-shell {
@@ -469,7 +573,7 @@
     display: flex;
     align-items: center;
     gap: var(--thumb-gap);
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
@@ -492,15 +596,15 @@
     border-radius: 14px;
     background: linear-gradient(180deg, #f8faff, #eef3ff);
     border: 1px solid rgba(18, 26, 42, 0.09);
-  }
 
-  .thumb-track::-webkit-scrollbar {
-    height: 8px;
-  }
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
 
-  .thumb-track::-webkit-scrollbar-thumb {
-    background: rgba(33, 63, 125, 0.34);
-    border-radius: 999px;
+    &::-webkit-scrollbar-thumb {
+      background: rgba(33, 63, 125, 0.34);
+      border-radius: 999px;
+    }
   }
 
   .thumb-card {
@@ -517,27 +621,30 @@
       transform 0.18s ease,
       box-shadow 0.18s ease,
       border-color 0.18s ease;
+
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: var(--thumb-aspect-ratio);
+      object-fit: cover;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
+    }
+
+    &.is-active {
+      border-color: rgba(47, 111, 237, 0.88);
+      box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.24);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2f6fed;
+      outline-offset: 2px;
+    }
   }
 
-  .thumb-card img {
-    display: block;
-    width: 100%;
-    aspect-ratio: var(--thumb-aspect-ratio);
-    object-fit: cover;
-  }
-
-  .thumb-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.16);
-  }
-
-  .thumb-card.is-active {
-    border-color: rgba(47, 111, 237, 0.88);
-    box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.24);
-  }
-
-  .thumb-card:focus-visible,
-  .page-nav:focus-visible,
   .hero-image:focus-visible {
     outline: 2px solid #2f6fed;
     outline-offset: 2px;
@@ -629,5 +736,21 @@
   :global(.pswp-thumb.is-active) {
     border-color: rgba(96, 165, 250, 0.95);
     box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
+  }
+
+  :global(.pswp__img.pswp-modal-slide-transition) {
+    animation: pswp-modal-slide-fade
+      var(--pswp-modal-slide-transition-duration, 320ms)
+      cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes pswp-modal-slide-fade {
+    from {
+      opacity: 0.12;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 </style>

@@ -45,6 +45,7 @@ export type ProductGalleryFeatures = {
   modalAnimationType: 'fade' | 'zoom';
   modalShowAnimationDurationMs: number;
   modalHideAnimationDurationMs: number;
+  modalSlideTransitionDurationMs: number;
   modalBackgroundOpacity: number;
 };
 
@@ -78,10 +79,11 @@ export const productGalleryFeatures: ProductGalleryFeatures =
 
     modernUi: true,
     smoothHeroTransition: true,
-    heroTransitionDurationMs: 520,
+    heroTransitionDurationMs: 1120,
     modalAnimationType: 'fade',
-    modalShowAnimationDurationMs: 280,
-    modalHideAnimationDurationMs: 240,
+    modalShowAnimationDurationMs: 1180,
+    modalHideAnimationDurationMs: 1140,
+    modalSlideTransitionDurationMs: 1100,
     modalBackgroundOpacity: 0.92,
   };
 
