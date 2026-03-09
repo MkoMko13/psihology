@@ -65,11 +65,37 @@
     if (/^https?:\/\//i.test(value)) return value;
 
     if (value.startsWith('/')) {
-      if (base && value.startsWith(`${base}/`)) return value;
+      if (base && value.startsWith(`${base}/`))
+        return value;
+
+      if (!base) {
+        const localPath = value.match(
+          /^\/[^/]+(\/images\/.*)$/i
+        )?.[1];
+        if (localPath) return localPath;
+      }
+
       return `${base}${value}`;
     }
 
     return '';
+  }
+
+  function stripRepoPrefixFromImagePath(src?: string) {
+    const value = src?.trim() ?? '';
+    return (
+      value.match(/^\/[^/]+(\/images\/.*)$/i)?.[1] ?? ''
+    );
+  }
+
+  function onImageError(event: Event) {
+    const image = event.currentTarget as HTMLImageElement;
+    const fallbackSrc = image.dataset.fallbackSrc ?? '';
+
+    if (!fallbackSrc || image.src.endsWith(fallbackSrc))
+      return;
+
+    image.src = fallbackSrc;
   }
 
   const safeGalleryItems = $derived(
@@ -453,6 +479,10 @@
                   galleryFeatures.heroTransitionDurationMs,
               }}
               src={currentItem?.src}
+              data-fallback-src={stripRepoPrefixFromImagePath(
+                currentItem?.src
+              )}
+              onerror={onImageError}
               alt={currentItem?.alt ||
                 `Зображення ${activeIndex + 1}`}
             />
@@ -460,6 +490,10 @@
         {:else}
           <img
             src={currentItem?.src}
+            data-fallback-src={stripRepoPrefixFromImagePath(
+              currentItem?.src
+            )}
+            onerror={onImageError}
             alt={currentItem?.alt ||
               `Зображення ${activeIndex + 1}`}
           />
@@ -495,6 +529,10 @@
           >
             <img
               src={item.thumbSrc || item.src}
+              data-fallback-src={stripRepoPrefixFromImagePath(
+                item.thumbSrc || item.src
+              )}
+              onerror={onImageError}
               alt={item.alt || `Зображення ${index + 1}`}
               loading="lazy"
             />
