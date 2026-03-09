@@ -1,10 +1,11 @@
 <script>
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
-  import Main from '$shared/ui/layout/Main.svelte';
+  import Main from '$shared/ui/typography/Main.svelte';
+  import Heading from '$shared/ui/typography/Heading.svelte';
 </script>
 
 <Main>
-  <section class="flex flex-col items-center bg-accent-300">
+  <section class="flex flex-col items-center bg-page-bg">
     <div
       class="relative z-1
       flex justify-center
@@ -13,11 +14,11 @@
       <div
         class="absolute
         flex flex-col items-center justify-center gap-2
-        w-full max-w-[700px] p-4 rounded-xl font-semibold text-center border bg-accent-300"
+        w-full max-w-[700px] p-4 rounded-xl font-semibold text-center border bg-accent-sec"
       >
         <div
-          class="w-[400px] h-auto bg-[url('images/bg/peace.png')] bg-center bg-no-repeat bg-cover
-          aspect-[16/9] rounded-xl"
+          class="w-[400px] h-auto bg-[url('images/bg/peace.png')] bg-fixed bg-top bg-no-repeat bg-contain
+          aspect-video rounded-xl"
         ></div>
         <p>
           ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
@@ -37,14 +38,14 @@
     </div>
   </section>
 
-  <section class="flex flex-col items-center">
+  <section class="flex flex-col items-center bg-accent-100">
     <div
       class="flex flex-wrap items-center justify-center gap-5
-      w-full max-w-320 pt-20 bg-accent-50"
+      w-full max-w-320 pt-20"
     >
-      <h2 class="w-full text-h2 text-center font-semibold">
+      <Heading level={2}>
         Освіта
-      </h2>
+      </Heading>
 
       <div
         class="w-full max-w-[600px] h-[400px] mr-3 bg-accent-300"

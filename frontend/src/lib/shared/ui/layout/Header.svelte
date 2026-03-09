@@ -3,8 +3,8 @@
 
 <header
   class="fixed z-2
-      flex justify-center w-full
-      bg-accent-300 shadow-md shadow-black/25"
+    flex justify-center w-full
+    bg-page-bg shadow-md shadow-black/25"
 >
   <div
     class="
@@ -51,7 +51,11 @@
 
     <div>
       <nav>
-        <ul class="flex gap-4 font-semibold uppercase">
+        <ul
+          class="flex gap-4
+          text-content-primary font-semibold uppercase
+          "
+        >
           <li>
             <a href="#">Головна</a>
           </li>
