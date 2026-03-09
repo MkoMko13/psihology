@@ -1,5 +1,13 @@
+<style global lang="scss">
+  @import '$styles/global.scss';
+  /* @import '$styles/typography.scss';*/
+</style>
+
+<!-- <script>
+  import { typography } from '@tailwindcss/typography';
+</script> -->
+
 <script lang="ts">
-  import '$styles/global.css';
   import favicon from '$lib/assets/favicon.svg';
   import Header from '$shared/ui/layout/Header.svelte';
   import Footer from '$shared/ui/layout/Footer.svelte';

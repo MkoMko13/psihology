@@ -7,38 +7,28 @@
     bg-page-bg shadow-md shadow-black/25"
 >
   <div
-    class="
-        flex justify-between items-center
-        py-2
-        w-full max-w-7xl
-        "
+    class="flex justify-between items-center
+      py-2 w-full max-w-7xl"
   >
     <div
-      class="
-            flex items-center gap-4"
+      class="flex items-center gap-4"
     >
       <div
-        class="
-                relative
-                before:absolute before:content-['']
-                before:left-1/2 before:top-1/2
-                before:-translate-x-1/2 before:-translate-y-1/2
-                before:w-[85px] before:h-[85px]
-                before:bg-white before:rounded-[50%]"
+        class="relative
+          before:absolute before:content-['']
+          before:left-1/2 before:top-1/2
+          before:-translate-x-1/2 before:-translate-y-1/2
+          before:w-[85px] before:h-[85px]
+          before:bg-white before:rounded-[50%]"
       >
         <img
           src="/images/shelihan_natalia.jpg"
           alt=""
-          class="relative
-                    z-20
-                    max-w-20 rounded-full
-                    "
+          class="relative z-20
+            max-w-20 rounded-full"
         />
       </div>
-      <div
-        class="
-                "
-      >
+      <div>
         <span class="font-bold text-xl uppercase">
           Сухачова Наталія
         </span>
@@ -53,8 +43,7 @@
       <nav>
         <ul
           class="flex gap-4
-          text-content-primary font-semibold uppercase
-          "
+            text-content-primary font-semibold uppercase"
         >
           <li>
             <a href="#">Головна</a>

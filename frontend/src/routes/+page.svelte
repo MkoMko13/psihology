@@ -2,23 +2,28 @@
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
+  // import { H1, H2, Body1, Caption } from '@smui/typography';
 </script>
 
 <Main>
   <section class="flex flex-col items-center bg-page-bg">
     <div
       class="relative z-1
-      flex justify-center
-      mfull320 w-full h-[400px] p-12"
+        flex justify-center
+        mfull320 w-full h-[400px] p-12"
     >
       <div
         class="absolute
-        flex flex-col items-center justify-center gap-2
-        w-full max-w-[700px] p-4 rounded-xl font-semibold text-center border bg-accent-sec"
+          flex flex-col items-center justify-center gap-2
+          w-full max-w-[700px] p-4
+          font-semibold text-center
+          border rounded-xl 
+          bg-muted-accent text-content-primary"
       >
         <div
-          class="w-[400px] h-auto bg-[url('images/bg/peace.png')] bg-fixed bg-top bg-no-repeat bg-contain
-          aspect-video rounded-xl"
+          class="w-[400px] h-auto
+            bg-[url('images/bg/peace.png')] bg-fixed bg-top bg-no-repeat bg-contain
+            aspect-video rounded-xl"
         ></div>
         <p>
           ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
@@ -41,19 +46,19 @@
   <section class="flex flex-col items-center bg-accent-100">
     <div
       class="flex flex-wrap items-center justify-center gap-5
-      w-full max-w-320 pt-20"
+        w-full max-w-320 pt-20"
     >
-      <Heading level={2}>
-        Освіта
-      </Heading>
+      <Heading level={2}>Освіта</Heading>
 
       <div
         class="w-full max-w-[600px] h-[400px] mr-3 bg-accent-300"
       ></div>
       <div class="flex flex-wrap gap-3 max-w-[400px]">
         <div
-          class="flex justify-center items-center
-          max-w-full p-8 rounded-xl bg-accent-300"
+          class="relative 
+            flex justify-center items-center
+            max-w-full p-8 
+            rounded-xl bg-muted-bg"
         >
           <p>
             2017-2020 НПУ ім. М. Драгоманова; Вчитель
@@ -63,7 +68,8 @@
 
         <div
           class="flex justify-center items-center
-          max-w-full rounded-xl p-8 bg-accent-300"
+            max-w-full p-8
+            rounded-xl bg-accent-300"
         >
           <p>
             2024-2025 магістратура Український державний

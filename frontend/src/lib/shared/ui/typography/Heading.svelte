@@ -1,46 +1,44 @@
 <script lang="ts">
-  export let level: 1 | 2 | 3 | 4 | 5 | 6 = 1;
-  export let className: string = ''; // для додаткових класів
+import type { Snippet } from 'svelte';
+
+type HeadingLevel = 1 | 2 | 3 | 4;
+  // ─── Пропси через $props() ───
+  let {
+    level = 1 as HeadingLevel,
+    className = '',
+    children,
+  }: {
+    level?: 1 | 2 | 3 | 4;
+    className?: string;
+    children?: Snippet;
+  } = $props();
+
+  // ─── Мапи (звичайні const, бо вони статичні) ───
+  const classesMap: Record<number, string> = {
+    1: 'text-4xl font-bold mb-4',
+    2: 'w-full text-h2 text-center font-semibold text-accent-primary',
+    3: 'text-2xl font-semibold mb-2',
+    4: 'text-xl font-medium mb-2',
+  } as const;
+
+  const tagMap: Record<HeadingLevel, string> = {
+    1: 'h1',
+    2: 'h2',
+    3: 'h3',
+    4: 'h4',
+  } as const satisfies Record<HeadingLevel, string>;
+
+  // ─── Реактивні значення через $derived ───
+  let tag = $derived(tagMap[level] ?? 'h1');
+
+  let classes = $derived(
+    `${classesMap[level] ?? classesMap[1]} ${className}`.trim()
+  );
+
+  // Захист: level повинен бути в межах 1–6
+  // (можна додати $effect для логування помилок, якщо хочеш)
 </script>
 
-{#if level === 1}
-  <h1 class={`text-4xl font-bold mb-4 ${className}`.trim()}>
-    <slot />
-  </h1>
-{:else if level === 2}
-  <h2 class={`w-full text-h2 text-center font-semibold text-accent-primary ${className}`.trim()}>
-    <slot />
-  </h2>
-{:else if level === 3}
-  <h3 class={`text-2xl font-semibold mb-2 ${className}`.trim()}>
-    <slot />
-  </h3>
-{:else if level === 4}
-  <h4 class={`text-xl font-medium mb-2 ${className}`.trim()}>
-    <slot />
-  </h4>
-{:else if level === 5}
-  <h5 class={`text-lg font-medium mb-1 ${className}`.trim()}>
-    <slot />
-  </h5>
-{:else}
-  <h6 class={`text-base font-medium mb-1 ${className}`.trim()}>
-    <slot />
-  </h6>
-{/if}
-
-<!-- ВИКОРИСТАННЯ -->
-
-<!-- <script>
-  import Heading from './Heading.svelte';
-</script>
-
-<Heading level={1}>Головний заголовок</Heading>
-
-<Heading level={2} className="text-red-500">
-  Розділ з рунами 
-</Heading>
-
-<Heading level={3}>
-  Підзаголовок з <span class="italic">акцентом</span> і emoji 🎯
-</Heading> -->
+<svelte:element this={tag} class={classes}>
+  {@render children?.()}
+</svelte:element>
