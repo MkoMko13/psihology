@@ -78,7 +78,7 @@ export const productGalleryFeatures: ProductGalleryFeatures =
 
     modernUi: true,
     smoothHeroTransition: true,
-    heroTransitionDurationMs: 220,
+    heroTransitionDurationMs: 520,
     modalAnimationType: 'fade',
     modalShowAnimationDurationMs: 280,
     modalHideAnimationDurationMs: 240,

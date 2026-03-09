@@ -10,7 +10,6 @@
     type GalleryItem,
   } from '$shared/config';
 
-  const galleryId = 'product-gallery';
   let activeIndex = $state(0);
   let thumbsTrack = $state<HTMLDivElement | null>(null);
   let lightbox = $state<PhotoSwipeLightbox | null>(null);
@@ -31,9 +30,33 @@
       `--thumb-visible-count: ${Math.max(1, productGalleryFeatures.thumbnailsVisibleCount)};`
   );
 
-  function captionHtml(item: GalleryItem) {
+  function captionText(item: GalleryItem) {
     return item.caption || item.alt || '';
   }
+
+  function escapeHtml(value: string) {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function safeImageSrc(src?: string) {
+    const value = src?.trim() ?? '';
+    return /^(\/|https?:\/\/)/i.test(value) ? value : '';
+  }
+
+  const safeGalleryItems = $derived(
+    productGalleryItems.map((item) => ({
+      ...item,
+      src: safeImageSrc(item.src),
+      thumbSrc: safeImageSrc(item.thumbSrc || item.src),
+    }))
+  );
+
+  const hasItems = $derived(safeGalleryItems.length > 0);
 
   function buildLightboxOptions(
     features: typeof productGalleryFeatures
@@ -65,7 +88,7 @@
         features.modalShowAnimationDurationMs,
       hideAnimationDuration:
         features.modalHideAnimationDurationMs,
-      dataSource: productGalleryItems.map((item) => ({
+      dataSource: safeGalleryItems.map((item) => ({
         src: item.src,
         width: item.width,
         height: item.height,
@@ -77,19 +100,20 @@
   }
 
   const currentItem = $derived(
-    productGalleryItems[activeIndex] ??
-      productGalleryItems[0]
+    safeGalleryItems[activeIndex] ?? safeGalleryItems[0]
   );
 
   function showPrevOnPage() {
+    if (!hasItems) return;
+    const itemsCount = safeGalleryItems.length;
     activeIndex =
-      (activeIndex - 1 + productGalleryItems.length) %
-      productGalleryItems.length;
+      (activeIndex - 1 + itemsCount) % itemsCount;
   }
 
   function showNextOnPage() {
+    if (!hasItems) return;
     activeIndex =
-      (activeIndex + 1) % productGalleryItems.length;
+      (activeIndex + 1) % safeGalleryItems.length;
   }
 
   function scrollThumbIntoView(
@@ -108,20 +132,12 @@
     });
   }
 
-  function scrollThumbTrackBy(direction: -1 | 1) {
-    const delta = (thumbsTrack?.clientWidth ?? 300) * 0.7;
-    thumbsTrack?.scrollBy({
-      left: delta * direction,
-      behavior: 'smooth',
-    });
-  }
-
   function openModal(index: number) {
-    if (!lightbox) return;
+    if (!lightbox || !hasItems) return;
 
     const targetIndex = Math.max(
       0,
-      Math.min(index, productGalleryItems.length - 1)
+      Math.min(index, safeGalleryItems.length - 1)
     );
     activeIndex = targetIndex;
     lightbox.loadAndOpen(targetIndex);
@@ -170,7 +186,6 @@
 
   onMount(() => {
     let disposed = false;
-    let modalThumbStrip: HTMLElement | null = null;
 
     (async () => {
       const { default: PhotoSwipeLightboxCtor } =
@@ -198,8 +213,10 @@
             onInit: (el, pswp) => {
               const render = () => {
                 const item =
-                  productGalleryItems[pswp.currIndex];
-                el.innerHTML = `<div class="pswp-caption">${captionHtml(item)}</div>`;
+                  safeGalleryItems[pswp.currIndex];
+                el.textContent = item
+                  ? captionText(item)
+                  : '';
               };
               render();
               pswp.on('change', render);
@@ -238,12 +255,10 @@
             appendTo: 'root',
             html: '<div class="pswp-thumbs"></div>',
             onInit: (el, pswp) => {
-              modalThumbStrip = el;
-
-              const thumbs = productGalleryItems
+              const thumbs = safeGalleryItems
                 .map(
                   (item, idx) =>
-                    `<button class="pswp-thumb ${idx === pswp.currIndex ? 'is-active' : ''}" data-idx="${idx}" aria-label="Slide ${idx + 1}"><img src="${item.thumbSrc || item.src}" alt="${item.alt || `Slide ${idx + 1}`}"></button>`
+                    `<button class="pswp-thumb ${idx === pswp.currIndex ? 'is-active' : ''}" data-idx="${idx}" aria-label="Slide ${idx + 1}"><img src="${escapeHtml(item.thumbSrc || item.src)}" alt="${escapeHtml(item.alt || `Slide ${idx + 1}`)}"></button>`
                 )
                 .join('');
 
@@ -291,7 +306,6 @@
 
     return () => {
       disposed = true;
-      modalThumbStrip = null;
       lightbox?.destroy();
       lightbox = null;
     };
@@ -303,7 +317,7 @@
   aria-label="Галерея товару"
   style={galleryCssVars}
 >
-  {#if productGalleryFeatures.heroPreview}
+  {#if productGalleryFeatures.heroPreview && hasItems}
     <div class="hero-wrap">
       {#if productGalleryFeatures.pageNavigation}
         <button
@@ -360,14 +374,10 @@
     </div>
   {/if}
 
-  {#if productGalleryFeatures.thumbnails}
+  {#if productGalleryFeatures.thumbnails && hasItems}
     <div class="thumb-strip-shell">
-      <div
-        class="thumb-track"
-        id={galleryId}
-        bind:this={thumbsTrack}
-      >
-        {#each productGalleryItems as item, index}
+      <div class="thumb-track" bind:this={thumbsTrack}>
+        {#each safeGalleryItems as item, index}
           <button
             type="button"
             class={`thumb-card ${index === activeIndex ? 'is-active' : ''}`}
