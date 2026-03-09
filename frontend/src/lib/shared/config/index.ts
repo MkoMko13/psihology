@@ -1,2 +1,2 @@
 // Public API for shared/config.
-export {};
+export * from './photoswipe';

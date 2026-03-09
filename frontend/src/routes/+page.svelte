@@ -1,11 +1,64 @@
-<script>
+<script lang="ts">
   import { base } from '$app/paths';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
+  import type {
+    GalleryItem,
+    ProductGalleryFeatures,
+  } from '$shared/config';
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
   import Carousel from '$shared/ui/Carousel.svelte';
   // import { H1, H2, Body1, Caption } from '@smui/typography';
+
+  const educationGalleryItems: GalleryItem[] = [
+    {
+      src: `${base}/images/docs/doc1.jpg`,
+      thumbSrc: `${base}/images/docs/doc1.jpg`,
+      width: 1600,
+      height: 1100,
+      alt: 'Документ 1',
+      caption: 'Документ 1',
+    },
+    {
+      src: `${base}/images/docs/doc2.jpg`,
+      thumbSrc: `${base}/images/docs/doc2.jpg`,
+      width: 1600,
+      height: 1100,
+      alt: 'Документ 2',
+      caption: 'Документ 2',
+    },
+    {
+      src: `${base}/images/docs/doc3.jpg`,
+      thumbSrc: `${base}/images/docs/doc3.jpg`,
+      width: 1600,
+      height: 1100,
+      alt: 'Документ 3',
+      caption: 'Документ 3',
+    },
+    {
+      src: `${base}/images/docs/doc4.jpg`,
+      thumbSrc: `${base}/images/docs/doc4.jpg`,
+      width: 1600,
+      height: 1100,
+      alt: 'Документ 4',
+      caption: 'Документ 4',
+    },
+    {
+      src: `${base}/images/docs/doc5.jpg`,
+      thumbSrc: `${base}/images/docs/doc5.jpg`,
+      width: 1600,
+      height: 1100,
+      alt: 'Документ 5',
+      caption: 'Документ 5',
+    },
+  ];
+
+  const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
+    {
+      heroTransitionDurationMs: 1120,
+      modalSlideTransitionDurationMs: 1100,
+    };
 </script>
 
 <Main>
@@ -57,7 +110,10 @@
       <div
         class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
       >
-        <Carousel />
+        <Carousel
+          items={educationGalleryItems}
+          features={educationGalleryFeatures}
+        />
       </div>
 
       <div class="flex flex-wrap gap-3 max-w-[400px]">
