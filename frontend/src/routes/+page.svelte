@@ -2,6 +2,7 @@
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
+  import ListItem from '$shared/ui/ListItem.svelte';
   // import { H1, H2, Body1, Caption } from '@smui/typography';
 </script>
 
@@ -17,7 +18,7 @@
           flex flex-col items-center justify-center gap-2
           w-full max-w-[700px] p-4
           font-semibold text-center
-          border rounded-xl 
+          border rounded-xl
           bg-muted-accent text-content-primary"
       >
         <div
@@ -54,31 +55,17 @@
         class="w-full max-w-[600px] h-[400px] mr-3 bg-accent-300"
       ></div>
       <div class="flex flex-wrap gap-3 max-w-[400px]">
-        <div
-          class="relative 
-            flex justify-center items-center
-            max-w-full p-8 
-            rounded-xl bg-muted-bg"
-        >
-          <p>
-            2017-2020 НПУ ім. М. Драгоманова; Вчитель
-            початкових класів, практичний психолог.
-          </p>
-        </div>
-
-        <div
-          class="flex justify-center items-center
-            max-w-full p-8
-            rounded-xl bg-accent-300"
-        >
-          <p>
-            2024-2025 магістратура Український державний
-            університет ім. М. Драгоманова; факультет
-            спеціальної та інклюзивної освіти, кафедра
-            спеціальної психології та медицини, освітня
-            програма “Клінічний психолог”
-          </p>
-        </div>
+        <ListItem>
+          2017-2020 НПУ ім. М. Драгоманова; Вчитель
+          початкових класів, практичний психолог.
+        </ListItem>
+        <ListItem>
+          2024-2025 магістратура Український державний
+          університет ім. М. Драгоманова; факультет
+          спеціальної та інклюзивної освіти, кафедра
+          спеціальної психології та медицини, освітня
+          програма “Клінічний психолог”
+        </ListItem>
       </div>
 
       <BaseButton variant="primary"
