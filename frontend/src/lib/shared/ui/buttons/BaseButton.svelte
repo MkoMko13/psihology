@@ -11,7 +11,12 @@
     children?: Snippet;
   };
 
-  let { variant = 'primary', size = 'md', className = '', children }: Props = $props();
+  let {
+    variant = 'primary',
+    size = 'md',
+    className = '',
+    children,
+  }: Props = $props();
 
   const variants: Record<Variant, string> = {
     primary: `
@@ -32,7 +37,9 @@
     lg: 'px-6 py-3 text-lg',
   };
 
-  const classes = $derived(`${variants[variant]} ${sizes[size]} ${className}`.trim());
+  const classes = $derived(
+    `${variants[variant]} ${sizes[size]} ${className}`.trim()
+  );
 </script>
 
 <button class={classes}>

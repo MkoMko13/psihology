@@ -10,9 +10,7 @@
     class="flex justify-between items-center
       py-2 w-full max-w-7xl"
   >
-    <div
-      class="flex items-center gap-4"
-    >
+    <div class="flex items-center gap-4">
       <div
         class="relative
           before:absolute before:content-['']

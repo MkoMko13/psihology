@@ -28,7 +28,7 @@ export default {
         // warning: 'var(--text-warning)',
 
         // --- Акцентні кольори ---
-        
+
         // --- Основні фонові кольори (Backgrounds) ---
         // Світлий м'ятний фон усього сайту та карток
         'page-bg': '#B2DFDB',

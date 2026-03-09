@@ -1,8 +1,3 @@
-<style global lang="scss">
-  @import '$styles/global.scss';
-  /* @import '$styles/typography.scss';*/
-</style>
-
 <!-- <script>
   import { typography } from '@tailwindcss/typography';
 </script> -->
@@ -15,10 +10,16 @@
   let { children } = $props();
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head><link rel="icon" href={favicon} /></svelte:head
+>
 
 <Header />
 
 {@render children()}
 
 <Footer />
+
+<style global lang="scss">
+  @import '$styles/global.scss';
+  /* @import '$styles/typography.scss';*/
+</style>

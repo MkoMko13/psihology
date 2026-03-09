@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Snippet } from 'svelte';
+  import type { Snippet } from 'svelte';
 
-type HeadingLevel = 1 | 2 | 3 | 4;
+  type HeadingLevel = 1 | 2 | 3 | 4;
   // ─── Пропси через $props() ───
   let {
     level = 1 as HeadingLevel,

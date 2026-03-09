@@ -3,6 +3,7 @@
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
+  import Carousel from '$shared/ui/Carousel.svelte';
   // import { H1, H2, Body1, Caption } from '@smui/typography';
 </script>
 
@@ -52,8 +53,11 @@
       <Heading level={2}>Освіта</Heading>
 
       <div
-        class="w-full max-w-[600px] h-[400px] mr-3 bg-accent-300"
-      ></div>
+        class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
+      >
+        <Carousel />
+      </div>
+
       <div class="flex flex-wrap gap-3 max-w-[400px]">
         <ListItem>
           2017-2020 НПУ ім. М. Драгоманова; Вчитель

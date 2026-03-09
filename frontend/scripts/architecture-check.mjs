@@ -2,7 +2,12 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = process.cwd();
-const featuresDir = path.join(root, 'src', 'lib', 'features');
+const featuresDir = path.join(
+  root,
+  'src',
+  'lib',
+  'features'
+);
 const widgetsDir = path.join(root, 'src', 'lib', 'widgets');
 
 function isCamelCase(name) {
@@ -16,7 +21,8 @@ async function listDirs(dir) {
     for (const entry of entries) {
       const full = path.join(dir, entry);
       const info = await stat(full);
-      if (info.isDirectory()) dirs.push({ name: entry, full });
+      if (info.isDirectory())
+        dirs.push({ name: entry, full });
     }
     return dirs;
   } catch {
@@ -53,7 +59,9 @@ async function checkFeatureFolderNames() {
   const errors = [];
   for (const dir of dirs) {
     if (!isCamelCase(dir.name)) {
-      errors.push(`Feature folder must be camelCase: src/lib/features/${dir.name}`);
+      errors.push(
+        `Feature folder must be camelCase: src/lib/features/${dir.name}`
+      );
     }
   }
   return errors;
@@ -66,14 +74,21 @@ async function checkWidgetsImportRules() {
     const content = await readFile(file, 'utf8');
     const importLines = content
       .split('\n')
-      .filter((line) => line.includes('import') || line.includes('from '));
+      .filter(
+        (line) =>
+          line.includes('import') || line.includes('from ')
+      );
 
     for (const line of importLines) {
       const forbidden =
-        line.includes("'$features") || line.includes('"$features') || line.includes('/features/');
+        line.includes("'$features") ||
+        line.includes('"$features') ||
+        line.includes('/features/');
 
       if (forbidden) {
-        errors.push(`widgets cannot import features: ${toPosix(path.relative(root, file))}`);
+        errors.push(
+          `widgets cannot import features: ${toPosix(path.relative(root, file))}`
+        );
         break;
       }
     }
@@ -82,7 +97,10 @@ async function checkWidgetsImportRules() {
 }
 
 async function run() {
-  const errors = [...(await checkFeatureFolderNames()), ...(await checkWidgetsImportRules())];
+  const errors = [
+    ...(await checkFeatureFolderNames()),
+    ...(await checkWidgetsImportRules()),
+  ];
 
   if (errors.length === 0) {
     console.log('Architecture checks passed.');
