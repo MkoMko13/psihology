@@ -1,4 +1,5 @@
 <script>
+  import { base } from '$app/paths';
 </script>
 
 <header
@@ -20,7 +21,7 @@
           before:bg-white before:rounded-[50%]"
       >
         <img
-          src="/images/shelihan_natalia.jpg"
+          src={`${base}/images/shelihan_natalia.jpg`}
           alt=""
           class="relative z-20
             max-w-20 rounded-full"

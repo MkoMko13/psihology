@@ -1,4 +1,5 @@
 <script>
+  import { base } from '$app/paths';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
@@ -24,8 +25,9 @@
       >
         <div
           class="w-[400px] h-auto
-            bg-[url('images/bg/peace.png')] bg-fixed bg-top bg-no-repeat bg-contain
+            bg-fixed bg-top bg-no-repeat bg-contain
             aspect-video rounded-xl"
+          style={`background-image: url('${base}/images/bg/peace.png');`}
         ></div>
         <p>
           ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
