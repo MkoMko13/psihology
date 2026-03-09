@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  import { base } from '$app/paths';
   import type PhotoSwipeLightbox from 'photoswipe/lightbox';
   import 'photoswipe/style.css';
 
@@ -60,7 +61,15 @@
 
   function safeImageSrc(src?: string) {
     const value = src?.trim() ?? '';
-    return /^(\/|https?:\/\/)/i.test(value) ? value : '';
+
+    if (/^https?:\/\//i.test(value)) return value;
+
+    if (value.startsWith('/')) {
+      if (base && value.startsWith(`${base}/`)) return value;
+      return `${base}${value}`;
+    }
+
+    return '';
   }
 
   const safeGalleryItems = $derived(
