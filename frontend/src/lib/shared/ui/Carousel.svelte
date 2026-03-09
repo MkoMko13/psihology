@@ -497,7 +497,7 @@
 </section>
 
 <style lang="scss">
-  .pswp__modal-thumbs {
+  :global(.pswp__modal-thumbs) {
     width: fit-content;
   }
   .gallery-shell {
@@ -702,7 +702,7 @@
     left: 50%;
     bottom: 12px;
     transform: translateX(-50%);
-    width: min(90vw, 640px);
+    max-width: min(90vw, 640px);
     pointer-events: auto;
   }
 
