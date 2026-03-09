@@ -82,6 +82,10 @@
   }
 
   function stripRepoPrefixFromImagePath(src?: string) {
+    // This fallback is only needed for local dev, where base === ''.
+    // On GitHub Pages we must keep '/<repo>/images/...'.
+    if (base) return '';
+
     const value = src?.trim() ?? '';
     return (
       value.match(/^\/[^/]+(\/images\/.*)$/i)?.[1] ?? ''
