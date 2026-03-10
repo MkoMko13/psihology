@@ -6,6 +6,10 @@ declare module 'svelte/elements' {
       event: CustomEvent<EmblaCarouselType>
     ) => void;
 
+    'on:emblainit'?: (
+      event: CustomEvent<EmblaCarouselType>
+    ) => void;
+
     onemblaInit?: (
       event: CustomEvent<EmblaCarouselType>
     ) => void;

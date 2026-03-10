@@ -1,2 +1,2 @@
 // Public API for shared/ui.
-export {};
+export { default as EmblaCarusel } from './EmblaCarusel.svelte';

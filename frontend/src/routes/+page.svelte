@@ -9,7 +9,19 @@
   import Heading from '$shared/ui/typography/Heading.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
   import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
-  import EmblaCarusel from '$shared/ui/EmblaCarusel.svelte';
+  import { EmblaCarusel } from '$shared/ui';
+
+  type EmblaSlide = {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    lowRes?: string;
+    mobileSrc?: string;
+    tabletSrc?: string;
+    srcSet?: string;
+    sizes?: string;
+  };
 
   // import { H1, H2, Body1, Caption } from '@smui/typography';
 
@@ -61,6 +73,46 @@
   //     heroTransitionDurationMs: 1120,
   //     modalSlideTransitionDurationMs: 1100,
   //   };
+
+  const educationSlides: EmblaSlide[] =
+    educationGalleryItems.map((item) => ({
+      src: item.src,
+      alt: item.alt ?? 'Зображення',
+      width: item.width,
+      height: item.height,
+    }));
+
+  const docsSlides: EmblaSlide[] = [
+    {
+      src: `${base}/images/docs/doc2.jpg`,
+      alt: 'Сертифікат 2',
+      width: 1600,
+      height: 1100,
+      mobileSrc: `${base}/images/docs/doc2.jpg`,
+      tabletSrc: `${base}/images/docs/doc2.jpg`,
+      lowRes: `${base}/images/docs/doc2.jpg`,
+      sizes:
+        '(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 600px',
+    },
+    {
+      src: `${base}/images/docs/doc4.jpg`,
+      alt: 'Сертифікат 4',
+      width: 1600,
+      height: 1100,
+      mobileSrc: `${base}/images/docs/doc4.jpg`,
+      tabletSrc: `${base}/images/docs/doc4.jpg`,
+      lowRes: `${base}/images/docs/doc4.jpg`,
+    },
+    {
+      src: `${base}/images/docs/doc5.jpg`,
+      alt: 'Сертифікат 5',
+      width: 1600,
+      height: 1100,
+      mobileSrc: `${base}/images/docs/doc5.jpg`,
+      tabletSrc: `${base}/images/docs/doc5.jpg`,
+      lowRes: `${base}/images/docs/doc5.jpg`,
+    },
+  ];
 </script>
 
 <Main>
@@ -111,13 +163,44 @@
 
       <div
         class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
-      >
-        <!-- <PhotoSwipe
-          items={educationGalleryItems}
-          features={educationGalleryFeatures}
-        /> -->
+      ></div>
 
-        <EmblaCarusel />
+      <div
+        class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
+      >
+        <EmblaCarusel
+          slides={docsSlides}
+          title="Галерея сертифікатів"
+          controls={{
+            showPrevButton: true,
+            showNextButton: true,
+            showPlayButton: false,
+            showDots: true,
+            showStatus: false,
+            spreadSideButtons: true,
+          }}
+          features={{
+            autoplay: false,
+            autoplayDelayMs: 3500,
+            announceChanges: false,
+          }}
+          animationEffect="fade"
+          controlLayout={{
+            placement: 'outside',
+            position: 'middle',
+          }}
+          classNames={{
+            root: 'custom-embla-root',
+            controls: 'custom-embla-controls',
+            prevButton: 'custom-embla-prev',
+            nextButton: 'custom-embla-next',
+            playButton: 'custom-embla-play',
+            dots: 'custom-embla-dots',
+            dot: 'custom-embla-dot',
+            dotActive: 'custom-embla-dot-active',
+            status: 'custom-embla-status',
+          }}
+        />
       </div>
 
       <div class="flex flex-wrap gap-3 max-w-[400px]">

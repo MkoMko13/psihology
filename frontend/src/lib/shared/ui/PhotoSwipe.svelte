@@ -828,3 +828,22 @@
     }
   }
 </style>
+
+ <!-- <PhotoSwipe
+          items={educationGalleryItems}
+          features={educationGalleryFeatures}
+        /> -->
+
+        <!-- <EmblaCarusel
+          slides={educationSlides}
+          title="Освітня галерея"
+          controls={{
+            showPlayButton: false,
+            showStatus: true,
+          }}
+          features={{
+            autoplay: false,
+            loop: true,
+          }}
+          animationEffect="fade"
+        /> -->
