@@ -9,6 +9,8 @@
   import Heading from '$shared/ui/typography/Heading.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
   import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
+  import EmblaCarusel from '$shared/ui/EmblaCarusel.svelte';
+
   // import { H1, H2, Body1, Caption } from '@smui/typography';
 
   const educationGalleryItems: GalleryItem[] = [
@@ -115,6 +117,7 @@
           features={educationGalleryFeatures}
         /> -->
 
+        <EmblaCarusel />
       </div>
 
       <div class="flex flex-wrap gap-3 max-w-[400px]">
