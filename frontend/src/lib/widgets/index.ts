@@ -1,2 +1,2 @@
 // Public API for widgets layer.
-export {};
+export * from './mediaCarousel';
