@@ -8,7 +8,7 @@
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
-  import Carousel from '$shared/ui/Carousel.svelte';
+  import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
   // import { H1, H2, Body1, Caption } from '@smui/typography';
 
   const educationGalleryItems: GalleryItem[] = [
@@ -54,11 +54,11 @@
     },
   ];
 
-  const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
-    {
-      heroTransitionDurationMs: 1120,
-      modalSlideTransitionDurationMs: 1100,
-    };
+  // const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
+  //   {
+  //     heroTransitionDurationMs: 1120,
+  //     modalSlideTransitionDurationMs: 1100,
+  //   };
 </script>
 
 <Main>
@@ -110,10 +110,11 @@
       <div
         class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
       >
-        <Carousel
+        <!-- <PhotoSwipe
           items={educationGalleryItems}
           features={educationGalleryFeatures}
-        />
+        /> -->
+
       </div>
 
       <div class="flex flex-wrap gap-3 max-w-[400px]">
