@@ -157,7 +157,7 @@
     <div
       class="relative z-1
         flex justify-center
-        mfull320 w-full h-[400px] p-12"
+        w-full h-[400px] p-12"
     >
       <div
         class="absolute
@@ -167,12 +167,12 @@
           border rounded-xl
           bg-muted-accent text-content-primary"
       >
-        <div
+        <!-- <div
           class="w-[400px] h-auto
             bg-fixed bg-top bg-no-repeat bg-contain
             aspect-video rounded-xl"
           style={`background-image: url('${base}/images/bg/peace.png');`}
-        ></div>
+        ></div> -->
         <p>
           ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
           ЖИТТІ?!
@@ -197,57 +197,57 @@
     <Heading level={2} className="mb-8">Освіта</Heading>
     <div
       class="flex flex-wrap items-center justify-center gap-5
-      max-w-screen-xl "
+      max-w-screen-xl"
     >
       <!-- <div
         class="max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
       > -->
-        <EmblaCarusel
-          slides={docsSlides}
-          transitionDurationMs={1000}
-          title="Галерея сертифікатів"
-          controls={{
-            showPrevButton: true,
-            showNextButton: true,
-            showPlayButton: false,
-            showDots: true,
-            showStatus: false,
-            spreadSideButtons: true,
-          }}
-          features={{
-            autoplay: true,
-            autoplayDelayMs: 7000,
-            announceChanges: false,
-          }}
-          controlLayout={{
-            placement: 'outside',
-            position: 'middle',
-          }}
-          thumbnails={{
-            enabled: false,
-            position: 'bottom',
-            visibleCount: 4,
-            align: 'center',
-            heightPx: 80,
-            sizePx: 100,
-            gapPx: 8,
-            spacingPx: 1,
-            hideBelowPx: 700,
-          }}
-          lightbox={emblaLightboxSettings}
-          insideEdgeOffset={202}
-          classNames={{
-            root: 'max-w-180',
-            controls: 'custom-embla-controls',
-            prevButton: 'custom-embla-prev',
-            nextButton: 'custom-embla-next',
-            playButton: 'custom-embla-play',
-            dots: 'custom-embla-dots',
-            dot: 'custom-embla-dot',
-            dotActive: 'custom-embla-dot-active',
-            status: 'custom-embla-status',
-          }}
-        />
+      <EmblaCarusel
+        slides={docsSlides}
+        transitionDurationMs={1000}
+        title="Галерея сертифікатів"
+        controls={{
+          showPrevButton: true,
+          showNextButton: true,
+          showPlayButton: false,
+          showDots: true,
+          showStatus: false,
+          spreadSideButtons: true,
+        }}
+        features={{
+          autoplay: true,
+          autoplayDelayMs: 7000,
+          announceChanges: false,
+        }}
+        controlLayout={{
+          placement: 'outside',
+          position: 'middle',
+        }}
+        thumbnails={{
+          enabled: false,
+          position: 'bottom',
+          visibleCount: 4,
+          align: 'center',
+          heightPx: 80,
+          sizePx: 100,
+          gapPx: 8,
+          spacingPx: 1,
+          hideBelowPx: 700,
+        }}
+        lightbox={emblaLightboxSettings}
+        insideEdgeOffset={202}
+        classNames={{
+          root: 'max-w-180',
+          controls: 'custom-embla-controls',
+          prevButton: 'custom-embla-prev',
+          nextButton: 'custom-embla-next',
+          playButton: 'custom-embla-play',
+          dots: 'custom-embla-dots',
+          dot: 'custom-embla-dot',
+          dotActive: 'custom-embla-dot-active',
+          status: 'custom-embla-status',
+        }}
+      />
       <!-- </div> -->
 
       <div class="flex flex-wrap gap-3 max-w-[400px]">

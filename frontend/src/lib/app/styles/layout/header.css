@@ -1,0 +1,21 @@
+@reference "../global.scss";
+ .menu-link {
+    @apply relative
+  transition-colors duration-200
+  hover:text-secondary
+  focus-visible:text-secondary
+  focus-visible:outline-none
+  active:text-secondary/80;
+
+    @apply after:content-['']
+  after:absolute
+  after:left-0 after:-bottom-1
+  after:h-[2px]
+  after:w-0
+  after:bg-secondary
+  after:transition-all
+  after:duration-300;
+
+    @apply hover:after:w-full
+  focus-visible:after:w-full;
+  }

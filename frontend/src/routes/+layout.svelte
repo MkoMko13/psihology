@@ -17,7 +17,7 @@
 
 {@render children()}
 
-<Footer />
+<!-- <Footer /> -->
 
 <style global lang="scss">
   @import '$styles/global.scss';

@@ -33,7 +33,7 @@ const config = {
       $core: 'src/lib/app',
       $server: 'src/lib/server',
       $styles: 'src/lib/app/styles',
-      // $static: 'frontend/static',
+      // $root: 'frontend',
     },
   },
 };
