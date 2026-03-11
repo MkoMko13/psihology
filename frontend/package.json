@@ -31,6 +31,7 @@
     "vite-imagetools": "^10.0.0"
   },
   "dependencies": {
+    "bits-ui": "^2.16.3",
     "dompurify": "^3.3.2",
     "embla-carousel": "^9.0.0-rc01",
     "embla-carousel-accessibility": "^9.0.0-rc01",

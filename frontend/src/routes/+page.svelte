@@ -1,16 +1,24 @@
 <script lang="ts">
   import { base } from '$app/paths';
+
+  // Other libraries
+  import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
+  import { EmblaCarusel } from '$widgets/mediaCarousel';
+  import BitAccordion from '$widgets/accordeon/BitAccordion.svelte';
+
+  // My libraries
+  import Main from '$shared/ui/typography/Main.svelte';
+  import Heading from '$shared/ui/typography/Heading.svelte';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
+  import ListItem from '$shared/ui/ListItem.svelte';
   import type {
     GalleryItem,
     ProductGalleryFeatures,
   } from '$shared/config';
-  import Main from '$shared/ui/typography/Main.svelte';
-  import Heading from '$shared/ui/typography/Heading.svelte';
-  import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
-  import { EmblaCarusel } from '$widgets/mediaCarousel';
   import { docsSlides } from '$lib/assets/docs';
 
+  // DATA
+  // PhotoSwipe
   const educationGalleryItems: GalleryItem[] = [
     {
       src: `${base}/images/docs/doc1.jpg`,
@@ -59,7 +67,7 @@
       heroTransitionDurationMs: 1120,
       modalSlideTransitionDurationMs: 1100,
     };
-
+  // Embla
   const emblaLightboxSettings = {
     breakpoint: {
       hideBelowPx: 320,
@@ -93,6 +101,55 @@
       autoplayVideos: false,
     },
   };
+
+  // Accordeon
+  const accordionItems = [
+    {
+      content: `✔ Курс “Турбота про психічне здоров’я дітей та молоді (з основами КПТ)” (Український інститут когнітивно-поведінкової терапії, річна програма вересень 2024-червень 2025).`,
+    },
+    {
+      content: `✔ Курс “КПТ модель консультування та супроводу при пережитті втрати” (Український інститут когнітивно-поведінкової терапії, червень 2024).`,
+    },
+    {
+      content: `✔ Курс “КПТ модель плекання психологічної стійкості” (Український інститут когнітивно-поведінкової терапії, березень 2024).`,
+    },
+    {
+      content: `✔ Тренінг “Впровадження НМВ суб’єктів, які здійснюють заходи у сфері протидії торгівлі людьми в Житомирській області. Регіональний компонент в Житомирському районі” (ГО “ЖІКЦ”, USAID, ООН, MOM) (22-23 листопада 2023).`,
+    },
+    {
+      content: `✔ СЕРТИФІКАТ attended the online training course Psychological First Aid for GBV Survivors and Effective Referrals (23 June 2023).`,
+    },
+    {
+      content: `✔ Тренінг для тренерів “Гендерно зумовлене насильство: психосоціальна підтримка” (в проєкті “Впровадження для фахівців сфери охорони здоров’я та соціальних працівників в Житомирській області освітніх та тренінгових програм для подолання психосоціальних та медичних травм у жертв сексуального насильства/ПТСР”, який реалізується ГО “ЖІКЦ” за підтримки Посольства Фінляндії в Україні).`,
+    },
+    {
+      content: `✔ Онлайн-тренінги «Методи та техніки самодопомоги в стресових ситуаціях» (у рамках проєкту «Твоє право знати. Твоє право обирати захист» згідно з Угодою ГО «Жіночий інформаційно-консультаційний центр» з Міжнародним Медичним Корпусом, лютий 2023).`,
+    },
+    {
+      content: `✔ Онлайн-тренінги проєкту “Розбудова потенціалу організацій для запобігання та захисту жінок і дівчат від ґендерно зумовленого насильства» ВГО «Жіночий консорціум України» за підтримки Міжнародного медичного корпусу, USAID:`,
+    },
+    {
+      content: `✔ «Попередження, запобігання гендерно зумовленого насильства», 8, 9 грудня 2022 р.`,
+    },
+    {
+      content: `✔ «Надання першої психологічної допомоги жінкам в умовах надзвичайних ситуацій», 14, 21 грудня 2022 р.`,
+    },
+    {
+      content: `✔ «Принцип не нашкодь», 11, 18 січня 2023 р.`,
+    },
+    {
+      content: `✔ «Впровадження механізму отримання зворотного зв’язку від клієнток організацій», 30, 31 січня 2023 р.`,
+    },
+    {
+      content: `✔ «Створення та впровадження механізму перенаправлення», 9, 10 лютого 2023 р.`,
+    },
+    {
+      content: `✔ Тренінг для менторів_ок програми UPSHIFT (Дитячий фонд ООН (ЮНІСЕФ) (жовтень, 2022).`,
+    },
+    {
+      content: `✔ Авторський курс з практичної психології «Особливості використання метафоричних асоціативних карт в психологічному консультуванні». Сертифікат (Житомир, 2018).`,
+    },
+  ];
 </script>
 
 <Main>
@@ -134,20 +191,17 @@
     </div>
   </section>
 
-  <section class="flex flex-col items-center bg-accent-100">
+  <section
+    class="flex flex-col items-center pt-20 bg-accent-100"
+  >
+    <Heading level={2} className="mb-8">Освіта</Heading>
     <div
       class="flex flex-wrap items-center justify-center gap-5
-        w-full max-w-320 pt-20"
+      max-w-screen-xl "
     >
-      <Heading level={2}>Освіта</Heading>
-
-      <div
-        class="w-full max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
-      ></div>
-
-      <div
-        class="w-full max-w-[500px] max-h-[500px] mr-3 bg-accent-300"
-      >
+      <!-- <div
+        class="max-w-[600px] max-h-[500px] mr-3 bg-accent-300"
+      > -->
         <EmblaCarusel
           slides={docsSlides}
           transitionDurationMs={1000}
@@ -161,8 +215,8 @@
             spreadSideButtons: true,
           }}
           features={{
-            autoplay: false,
-            autoplayDelayMs: 3500,
+            autoplay: true,
+            autoplayDelayMs: 7000,
             announceChanges: false,
           }}
           controlLayout={{
@@ -170,7 +224,7 @@
             position: 'middle',
           }}
           thumbnails={{
-            enabled: true,
+            enabled: false,
             position: 'bottom',
             visibleCount: 4,
             align: 'center',
@@ -183,7 +237,7 @@
           lightbox={emblaLightboxSettings}
           insideEdgeOffset={202}
           classNames={{
-            root: 'custom-embla-root',
+            root: 'max-w-180',
             controls: 'custom-embla-controls',
             prevButton: 'custom-embla-prev',
             nextButton: 'custom-embla-next',
@@ -194,9 +248,9 @@
             status: 'custom-embla-status',
           }}
         />
-      </div>
+      <!-- </div> -->
 
-      <!-- <div class="flex flex-wrap gap-3 max-w-[400px]">
+      <div class="flex flex-wrap gap-3 max-w-[400px]">
         <ListItem>
           2017-2020 НПУ ім. М. Драгоманова; Вчитель
           початкових класів, практичний психолог.
@@ -208,12 +262,14 @@
           спеціальної психології та медицини, освітня
           програма “Клінічний психолог”
         </ListItem>
-      </div> -->
+      </div>
 
-      <BaseButton variant="primary"
-        >Детальніше про освіту
-      </BaseButton>
-      <div class="basis-full w-full min-w-0 max-w-[800px]">
+      <BitAccordion
+        accordTitle="Детальніше про освіту"
+        items={accordionItems}
+      />
+
+      <!-- <div class="basis-full w-full min-w-0 max-w-[800px]">
         <PhotoSwipe
           items={educationGalleryItems}
           features={educationGalleryFeatures}
@@ -229,21 +285,7 @@
           //   thumbCardActive: 'ring-2 ring-blue-500',
           // }}
         />
-      </div>
+      </div> -->
     </div>
   </section>
 </Main>
-
-<div id="inline-lightbox-content" style="display:none">
-  <div
-    class="p-6 bg-page-bg text-content-primary rounded-lg"
-  >
-    <h3 class="text-xl font-semibold mb-2">
-      Inline Контент Для GLightbox
-    </h3>
-    <p>
-      Цей блок відкривається як <code>type: 'inline'</code>.
-      Можна розміщувати будь-який HTML.
-    </p>
-  </div>
-</div>

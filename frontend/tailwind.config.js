@@ -7,6 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
+
+        
         // --- Фонові кольори ---
 
         secondary: '#144249',

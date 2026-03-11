@@ -1,7 +1,8 @@
 <script lang="ts">
+  import type { Variant } from './constants.ts';
   import type { Snippet } from 'svelte';
+  import { variants } from '$shared/ui/buttons/constants';
 
-  type Variant = 'primary' | 'outline';
   type Size = 'sm' | 'md' | 'lg';
 
   type Props = {
@@ -17,19 +18,6 @@
     className = '',
     children,
   }: Props = $props();
-
-  const variants: Record<Variant, string> = {
-    primary: `
-		bg-secondary text-white
-    py-1 px-8
-    rounded-lg
-`,
-    outline: `
-		bg-secondary text-white
-		py-1 px-8
-		rounded-lg
-`,
-  };
 
   const sizes: Record<Size, string> = {
     sm: 'px-3 py-1 text-sm',
