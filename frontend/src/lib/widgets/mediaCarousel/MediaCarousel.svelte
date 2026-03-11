@@ -287,6 +287,8 @@
   let mainThumbsViewportEl = $state<HTMLDivElement | null>(
     null
   );
+  /** False until requestIdleCallback fires after LCP — keeps carousel JS off the critical path */
+  let carouselReady = $state(false);
 
   function cx(
     ...parts: Array<string | null | undefined | false>
@@ -1431,6 +1433,35 @@
       }
     });
 
+    // ── Defer carousel activation until after LCP ───────────────────────────
+    // The section renders a static first-slide image immediately (good for LCP);
+    // the full Embla carousel initialises only once the browser is idle /
+    // 200 ms have elapsed — whichever comes first.
+    const idleWin = window as Window & {
+      requestIdleCallback?: (
+        cb: IdleRequestCallback,
+        opts?: IdleRequestOptions
+      ) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    let lcpIdleHandle = 0;
+    const activateCarousel = () => {
+      carouselReady = true;
+    };
+    if (typeof idleWin.requestIdleCallback === 'function') {
+      lcpIdleHandle = idleWin.requestIdleCallback(
+        activateCarousel,
+        {
+          timeout: 500,
+        }
+      );
+    } else {
+      lcpIdleHandle = window.setTimeout(
+        activateCarousel,
+        200
+      );
+    }
+
     return () => {
       window.clearTimeout(resizeTimer);
       if (lightboxSyncFrame1) {
@@ -1449,6 +1480,13 @@
       thumbsApi?.off('reinit', syncThumbsToMain);
       lightboxInstance?.destroy?.();
       lightboxInstance = null;
+      if (
+        typeof idleWin.cancelIdleCallback === 'function'
+      ) {
+        idleWin.cancelIdleCallback(lcpIdleHandle);
+      } else {
+        window.clearTimeout(lcpIdleHandle);
+      }
     };
   });
 </script>
@@ -1604,107 +1642,52 @@
     </div>
   {/snippet}
 
-  {#if hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'top'}
-    {@render ControlsBlock()}
-  {/if}
-
-  {#if showMainThumbs && thumbsSettings.position === 'top'}
-    {@render ThumbsBlock()}
-  {/if}
-
-  <div
-    class={cx(
-      'embla__layout',
-      `embla__layout--thumbs-${thumbsSettings.position}`
-    )}
-  >
-    {#if showMainThumbs && thumbsSettings.position === 'left'}
-      {@render ThumbsBlock()}
-    {/if}
-
+  {#snippet CarouselViewport()}
     <div
-      class={cx('embla__stage', classNameSettings.stage)}
+      class={cx(
+        'embla__viewport',
+        classNameSettings.viewport
+      )}
+      use:useEmblaCarousel={{
+        options: mainOptions,
+        plugins,
+      }}
+      onemblainit={onEmblaInit}
     >
       <div
         class={cx(
-          'embla__viewport',
-          classNameSettings.viewport
+          'embla__container',
+          classNameSettings.container
         )}
-        use:useEmblaCarousel={{
-          options: mainOptions,
-          plugins,
-        }}
-        onemblainit={onEmblaInit}
       >
-        <div
-          class={cx(
-            'embla__container',
-            classNameSettings.container
-          )}
-        >
-          {#each slides as slide, index}
-            {@const slideDimensions =
-              getSlideDimensions(slide)}
-            {@const imageSizes = getImageSizes(slide)}
-            <div
-              style={`aspect-ratio: var(--embla-frame-ratio);`}
-              class={cx(
-                'embla__slide',
-                selectedSnap === index &&
-                  'embla__slide--selected',
-                classNameSettings.slide,
-                selectedSnap === index &&
-                  classNameSettings.slideSelected
-              )}
-            >
-              {#if showLightbox}
-                <button
-                  class="embla__slide-hit"
-                  type="button"
-                  tabindex={selectedSnap === index ? 0 : -1}
-                  aria-label={`Відкрити слайд ${index + 1} у лайтбоксі`}
-                  data-index={index}
-                  onclick={(event) =>
-                    openLightbox(
-                      index,
-                      event.currentTarget as HTMLButtonElement
-                    )}
-                >
-                  <picture>
-                    {#if slide.mobileSrc}
-                      <source
-                        media="(max-width: 640px)"
-                        srcset={slide.mobileSrc}
-                      />
-                    {/if}
-                    {#if slide.tabletSrc}
-                      <source
-                        media="(max-width: 1024px)"
-                        srcset={slide.tabletSrc}
-                      />
-                    {/if}
-                    <img
-                      class={cx(
-                        'embla__image',
-                        classNameSettings.image
-                      )}
-                      src={slide.src}
-                      srcset={slide.srcSet}
-                      sizes={imageSizes}
-                      alt={slide.alt}
-                      width={slideDimensions.width}
-                      height={slideDimensions.height}
-                      loading={index === 0
-                        ? 'eager'
-                        : 'lazy'}
-                      fetchpriority={index === 0
-                        ? 'high'
-                        : 'low'}
-                      decoding="async"
-                    />
-                  </picture>
-                </button>
-              {:else}
+        {#each slides as slide, index}
+          {@const slideDimensions =
+            getSlideDimensions(slide)}
+          {@const imageSizes = getImageSizes(slide)}
+          <div
+            style={`aspect-ratio: var(--embla-frame-ratio);`}
+            class={cx(
+              'embla__slide',
+              selectedSnap === index &&
+                'embla__slide--selected',
+              classNameSettings.slide,
+              selectedSnap === index &&
+                classNameSettings.slideSelected
+            )}
+          >
+            {#if showLightbox}
+              <button
+                class="embla__slide-hit"
+                type="button"
+                tabindex={selectedSnap === index ? 0 : -1}
+                aria-label={`Відкрити слайд ${index + 1} у лайтбоксі`}
+                data-index={index}
+                onclick={(event) =>
+                  openLightbox(
+                    index,
+                    event.currentTarget as HTMLButtonElement
+                  )}
+              >
                 <picture>
                   {#if slide.mobileSrc}
                     <source
@@ -1736,35 +1719,146 @@
                     decoding="async"
                   />
                 </picture>
-              {/if}
-            </div>
-          {/each}
-        </div>
+              </button>
+            {:else}
+              <picture>
+                {#if slide.mobileSrc}
+                  <source
+                    media="(max-width: 640px)"
+                    srcset={slide.mobileSrc}
+                  />
+                {/if}
+                {#if slide.tabletSrc}
+                  <source
+                    media="(max-width: 1024px)"
+                    srcset={slide.tabletSrc}
+                  />
+                {/if}
+                <img
+                  class={cx(
+                    'embla__image',
+                    classNameSettings.image
+                  )}
+                  src={slide.src}
+                  srcset={slide.srcSet}
+                  sizes={imageSizes}
+                  alt={slide.alt}
+                  width={slideDimensions.width}
+                  height={slideDimensions.height}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchpriority={index === 0
+                    ? 'high'
+                    : 'low'}
+                  decoding="async"
+                />
+              </picture>
+            {/if}
+          </div>
+        {/each}
       </div>
+    </div>
 
-      {#if hasControlButtons && layoutSettings.placement === 'inside'}
-        {@render ControlsBlock()}
-      {/if}
+    {#if hasControlButtons && layoutSettings.placement === 'inside'}
+      {@render ControlsBlock()}
+    {/if}
 
-      {#if hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'middle'}
-        {@render ControlsBlock()}
+    {#if hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'middle'}
+      {@render ControlsBlock()}
+    {/if}
+  {/snippet}
+
+  {#if carouselReady && hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'top'}
+    {@render ControlsBlock()}
+  {/if}
+
+  {#if carouselReady && showMainThumbs && thumbsSettings.position === 'top'}
+    {@render ThumbsBlock()}
+  {/if}
+
+  <div
+    class={cx(
+      'embla__layout',
+      `embla__layout--thumbs-${thumbsSettings.position}`
+    )}
+  >
+    {#if carouselReady && showMainThumbs && thumbsSettings.position === 'left'}
+      {@render ThumbsBlock()}
+    {/if}
+
+    <div
+      class={cx('embla__stage', classNameSettings.stage)}
+    >
+      {#if !carouselReady}
+        {#if firstSlide}
+          {@const fd = getSlideDimensions(firstSlide)}
+          <div
+            class={cx(
+              'embla__viewport',
+              classNameSettings.viewport
+            )}
+          >
+            <div class={cx('embla__container')}>
+              <div
+                style="aspect-ratio: var(--embla-frame-ratio);"
+                class={cx(
+                  'embla__slide',
+                  'embla__slide--selected',
+                  classNameSettings.slide,
+                  classNameSettings.slideSelected
+                )}
+              >
+                <picture>
+                  {#if firstSlide.mobileSrc}
+                    <source
+                      media="(max-width: 640px)"
+                      srcset={firstSlide.mobileSrc}
+                    />
+                  {/if}
+                  {#if firstSlide.tabletSrc}
+                    <source
+                      media="(max-width: 1024px)"
+                      srcset={firstSlide.tabletSrc}
+                    />
+                  {/if}
+                  <img
+                    class={cx(
+                      'embla__image',
+                      classNameSettings.image
+                    )}
+                    src={firstSlide.src}
+                    srcset={firstSlide.srcSet}
+                    sizes={firstSlideSizes}
+                    alt={firstSlide.alt}
+                    width={fd.width}
+                    height={fd.height}
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
+            </div>
+          </div>
+        {/if}
+      {:else}
+        {@render CarouselViewport()}
       {/if}
     </div>
 
-    {#if showMainThumbs && thumbsSettings.position === 'right'}
+    {#if carouselReady && showMainThumbs && thumbsSettings.position === 'right'}
       {@render ThumbsBlock()}
     {/if}
   </div>
 
-  {#if showMainThumbs && thumbsSettings.position === 'bottom'}
+  {#if carouselReady && showMainThumbs && thumbsSettings.position === 'bottom'}
     {@render ThumbsBlock()}
   {/if}
 
-  {#if hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'bottom'}
+  {#if carouselReady && hasControlButtons && layoutSettings.placement === 'outside' && layoutSettings.position === 'bottom'}
     {@render ControlsBlock()}
   {/if}
 
-  {#if controlSettings.showDots}
+  {#if carouselReady && controlSettings.showDots}
     <div
       bind:this={dotsWrapperEl}
       class={cx('embla__dots', classNameSettings.dots)}
@@ -1786,7 +1880,7 @@
     </div>
   {/if}
 
-  {#if controlSettings.showStatus}
+  {#if carouselReady && controlSettings.showStatus}
     <p
       class={cx('embla__status', classNameSettings.status)}
       aria-live="polite"

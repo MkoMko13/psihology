@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { text } from '@sveltejs/kit';
   import { base } from '$app/paths';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import type {
@@ -8,10 +7,9 @@
   } from '$shared/config';
   import Main from '$shared/ui/typography/Main.svelte';
   import Heading from '$shared/ui/typography/Heading.svelte';
-  import ListItem from '$shared/ui/ListItem.svelte';
   import PhotoSwipe from '$shared/ui/PhotoSwipe.svelte';
   import { EmblaCarusel } from '$widgets/mediaCarousel';
-  import type { EmblaSlide } from '$widgets/mediaCarousel';
+  import { docsSlides } from '$lib/assets/docs';
 
   const educationGalleryItems: GalleryItem[] = [
     {
@@ -54,177 +52,13 @@
       alt: 'Документ 5',
       caption: 'Документ 5',
     },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      thumbSrc: `${base}/images/docs/doc5.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 5',
-      caption: 'Документ 5',
-    },
   ];
+
   const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
     {
       heroTransitionDurationMs: 1120,
       modalSlideTransitionDurationMs: 1100,
     };
-
-  // const educationSlides: EmblaSlide[] =
-  //   educationGalleryItems.map((item) => ({
-  //     src: item.src,
-  //     alt: item.alt ?? 'Зображення',
-  //     dimensions:
-  //       item.width && item.height
-  //         ? { width: item.width, height: item.height }
-  //         : undefined,
-  //   }));
-
-  const docDimensions = {
-    width: 1600,
-    height: 1100,
-  } as const;
-
-  const docsSlides: EmblaSlide[] = [
-    {
-      src: `${base}/images/docs/doc2.jpg`,
-      alt: 'Сертифікат 2',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc2.jpg`,
-      tabletSrc: `${base}/images/docs/doc2.jpg`,
-      lowRes: `${base}/images/docs/doc2.jpg`,
-      sizes:
-        '(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 600px',
-      lightboxContent: {
-        title: 'Сертифікат 2: Основний документ',
-        description:
-          '<p>Короткий</p> <p>опис<p/> із HTML-розміткою.',
-        descriptionPosition: 'right',
-      },
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      alt: 'Сертифікат 4',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc4.jpg`,
-      tabletSrc: `${base}/images/docs/doc4.jpg`,
-      lowRes: `${base}/images/docs/doc4.jpg`,
-      lightboxContent: {
-        title: 'Сертифікат 4: Додатковий документ',
-        description:
-          'Опис слайду можна ввімкнути/вимкнути глобально в lightbox settings.',
-        classNames: {
-          // optional: item-level класи тільки для цього слайду
-          // overlay: 'bg-white!',                               // optional: .goverlay
-          // container: 'flex justify-center max-w-[70%]', // optional: .gcontainer
-          title: '!font-bold !text-white', // optional: .gslide-title
-          description: '!font-bold !text-white', // optional: .gslide-desc
-          descriptionWrap: 'rounded-xl bg-black/60 p-4', // optional: .gslide-description + .gdesc-inner
-          // descriptionInner: 'border border-white/20', // optional: .gdesc-inner
-        },
-      },
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      alt: 'Сертифікат 5',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc5.jpg`,
-      tabletSrc: `${base}/images/docs/doc5.jpg`,
-      lowRes: `${base}/images/docs/doc5.jpg`,
-      lightboxType: 'video',
-      lightboxHref:
-        'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-      lightboxContent: {
-        description:
-          'Приклад video slide (YouTube) у GLightbox.',
-      },
-    },
-    {
-      src: `${base}/images/docs/doc2.jpg`,
-      alt: 'Сертифікат 2',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc2.jpg`,
-      tabletSrc: `${base}/images/docs/doc2.jpg`,
-      lowRes: `${base}/images/docs/doc2.jpg`,
-      sizes:
-        '(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 600px',
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      alt: 'Сертифікат 4',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc4.jpg`,
-      tabletSrc: `${base}/images/docs/doc4.jpg`,
-      lowRes: `${base}/images/docs/doc4.jpg`,
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      alt: 'Сертифікат 5',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc5.jpg`,
-      tabletSrc: `${base}/images/docs/doc5.jpg`,
-      lowRes: `${base}/images/docs/doc5.jpg`,
-      lightboxType: 'iframe',
-      lightboxHref: 'https://example.com',
-      lightboxContent: {
-        description:
-          'Приклад iframe (можна замінити на Google Maps або власну сторінку).',
-      },
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      alt: 'Сертифікат 4',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc4.jpg`,
-      tabletSrc: `${base}/images/docs/doc4.jpg`,
-      lowRes: `${base}/images/docs/doc4.jpg`,
-      lightboxType: 'inline',
-      lightboxHref: '#inline-lightbox-content',
-      lightboxContent: {
-        description:
-          'Inline content з елемента на поточній сторінці.',
-      },
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      alt: 'Сертифікат 5',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc5.jpg`,
-      tabletSrc: `${base}/images/docs/doc5.jpg`,
-      lowRes: `${base}/images/docs/doc5.jpg`,
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      alt: 'Сертифікат 4',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc4.jpg`,
-      tabletSrc: `${base}/images/docs/doc4.jpg`,
-      lowRes: `${base}/images/docs/doc4.jpg`,
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      alt: 'Сертифікат 5',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc5.jpg`,
-      tabletSrc: `${base}/images/docs/doc5.jpg`,
-      lowRes: `${base}/images/docs/doc5.jpg`,
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      alt: 'Сертифікат 4',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc4.jpg`,
-      tabletSrc: `${base}/images/docs/doc4.jpg`,
-      lowRes: `${base}/images/docs/doc4.jpg`,
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      alt: 'Сертифікат 5',
-      dimensions: docDimensions,
-      mobileSrc: `${base}/images/docs/doc5.jpg`,
-      tabletSrc: `${base}/images/docs/doc5.jpg`,
-      lowRes: `${base}/images/docs/doc5.jpg`,
-    },
-  ];
 
   const emblaLightboxSettings = {
     breakpoint: {
