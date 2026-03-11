@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import 'glightbox/dist/css/glightbox.css';
 
   import type {
     EmblaCarouselType,
@@ -8,10 +7,6 @@
     EmblaPluginType,
   } from 'embla-carousel';
   import useEmblaCarousel from 'embla-carousel-svelte';
-  import Autoplay from 'embla-carousel-autoplay';
-  import Accessibility, {
-    type AccessibilityOptionsType,
-  } from 'embla-carousel-accessibility';
 
   type EmblaLightboxUiClassNames = {
     overlay?: string;
@@ -21,6 +16,49 @@
     descriptionWrap?: string;
     descriptionInner?: string;
   };
+
+  type AccessibilityOptionsType = {
+    active: boolean;
+    announceChanges: boolean;
+    carouselAriaLabel: string;
+    carouselAriaRoleDescription: string;
+    carouselRole: 'region';
+    previousButtonAriaLabel: string;
+    nextButtonAriaLabel: string;
+    slideAriaRoleDescription: string;
+    slideRole: 'group';
+  };
+
+  type AccessibilityPluginApi = {
+    setupPrevAndNextButtons?: (
+      prevButton: HTMLButtonElement,
+      nextButton: HTMLButtonElement
+    ) => void;
+    setupDotButtons?: (dotsWrapper: HTMLDivElement) => void;
+    setupLiveRegion?: (liveRegion: HTMLDivElement) => void;
+    setUpdateLiveRegion?: (value: boolean) => void;
+    updateLiveRegion?: () => void;
+  };
+
+  type AutoplayPluginApi = {
+    play?: () => void;
+    stop?: () => void;
+  };
+
+  type EmblaPluginRegistry = {
+    autoplay?: AutoplayPluginApi;
+    accessibility?: AccessibilityPluginApi;
+  };
+
+  type EmblaAutoplayFactory = (options: {
+    delay: number;
+    defaultInteraction: boolean;
+    stopOnLastSnap: boolean;
+  }) => EmblaPluginType;
+
+  type EmblaAccessibilityFactory = (
+    options: AccessibilityOptionsType
+  ) => EmblaPluginType;
 
   export type EmblaSlide = {
     src: string;
@@ -217,11 +255,28 @@
   let isAutoplayRunning = $state(true);
   let syncingThumbsFromMain = false;
   let viewportWidth = $state(1440);
+  let carouselRootEl = $state<HTMLElement | null>(null);
   let lightboxInstance = $state<any>(null);
   let glightboxLoaded = false;
+  let glightboxCssLoaded = false;
+  let domPurify = $state<
+    (typeof import('dompurify'))['default'] | null
+  >(null);
+  let autoplayFactory = $state<EmblaAutoplayFactory | null>(
+    null
+  );
+  let accessibilityFactory =
+    $state<EmblaAccessibilityFactory | null>(null);
   let glightboxFactory:
     | ((options: Record<string, unknown>) => any)
     | null = null;
+  let resizeTimer = 0;
+  let lightboxSyncFrame1 = 0;
+  let lightboxSyncFrame2 = 0;
+  const preloadedSlideSrcs = new Set<string>();
+  let visibilityObserver: IntersectionObserver | null =
+    null;
+  let isCarouselInViewport = $state(true);
   let lastLightboxTrigger =
     $state<HTMLButtonElement | null>(null);
 
@@ -396,6 +451,14 @@
     }
   );
 
+  const shouldUseAccessibility = $derived(
+    featureSettings.announceChanges ||
+      controlSettings.showPrevButton ||
+      controlSettings.showNextButton ||
+      controlSettings.showDots ||
+      controlSettings.showStatus
+  );
+
   const hasControlButtons = $derived(
     controlSettings.showPrevButton ||
       controlSettings.showPlayButton ||
@@ -445,14 +508,27 @@
       slideRole: 'group',
     });
 
-  const plugins = $derived<EmblaPluginType[]>([
-    Autoplay({
-      delay: featureSettings.autoplayDelayMs,
-      defaultInteraction: false,
-      stopOnLastSnap: false,
-    }),
-    Accessibility(accessibilityOptions),
-  ]);
+  const plugins = $derived.by(() => {
+    const result: EmblaPluginType[] = [];
+
+    if (featureSettings.autoplay && autoplayFactory) {
+      result.push(
+        autoplayFactory({
+          delay: featureSettings.autoplayDelayMs,
+          defaultInteraction: false,
+          stopOnLastSnap: false,
+        })
+      );
+    }
+
+    if (shouldUseAccessibility && accessibilityFactory) {
+      result.push(
+        accessibilityFactory(accessibilityOptions)
+      );
+    }
+
+    return result;
+  });
 
   const insideEdgeOffsetPx = $derived(
     Math.max(0, Math.round(insideEdgeOffset))
@@ -462,9 +538,30 @@
     Math.max(120, Math.round(transitionDurationMs))
   );
 
+  const firstSlide = $derived(slides[0]);
+
+  const firstSlideSrc = $derived(firstSlide?.src);
+
+  const firstSlideSrcSet = $derived(firstSlide?.srcSet);
+
+  const firstSlideSizes = $derived(
+    firstSlide ? getImageSizes(firstSlide) : undefined
+  );
+
   function clamp(index: number) {
     if (slides.length === 0) return 0;
     return Math.max(0, Math.min(index, slides.length - 1));
+  }
+
+  function getExternalOrigin(src?: string) {
+    if (!src || !/^https?:\/\//i.test(src))
+      return undefined;
+
+    try {
+      return new URL(src).origin;
+    } catch {
+      return undefined;
+    }
   }
 
   function getSlideDimensions(slide: EmblaSlide) {
@@ -514,73 +611,55 @@
       return stripped.length > 0 ? stripped : undefined;
     }
 
-    const template = document.createElement('template');
-    template.innerHTML = value;
-
-    const allowedTags = new Set([
-      'P',
-      'BR',
-      'STRONG',
-      'EM',
-      'B',
-      'I',
-      'U',
-      'UL',
-      'OL',
-      'LI',
-      'A',
-      'SPAN',
-      'CODE',
-    ]);
-
-    const walker = document.createTreeWalker(
-      template.content,
-      NodeFilter.SHOW_ELEMENT
-    );
-    const elements: Element[] = [];
-    while (walker.nextNode()) {
-      elements.push(walker.currentNode as Element);
+    if (!domPurify) {
+      const stripped = value
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return stripped.length > 0 ? stripped : undefined;
     }
 
-    elements.forEach((el) => {
-      if (!allowedTags.has(el.tagName)) {
-        const textNode = document.createTextNode(
-          el.textContent ?? ''
-        );
-        el.replaceWith(textNode);
-        return;
-      }
+    const template = document.createElement('template');
+    template.innerHTML = domPurify.sanitize(value, {
+      ALLOWED_TAGS: [
+        'p',
+        'br',
+        'strong',
+        'em',
+        'b',
+        'i',
+        'u',
+        'ul',
+        'ol',
+        'li',
+        'a',
+        'span',
+        'code',
+      ],
+      ALLOWED_ATTR: ['href', 'title', 'target', 'rel'],
+      ALLOW_DATA_ATTR: false,
+      ALLOW_UNKNOWN_PROTOCOLS: false,
+      FORBID_TAGS: ['style', 'script'],
+    });
 
-      const attrs = Array.from(el.attributes);
-      attrs.forEach((attr) => {
-        const name = attr.name.toLowerCase();
-        const isSafeAnchorAttr =
-          el.tagName === 'A' &&
-          ['href', 'title', 'target', 'rel'].includes(name);
-
-        if (!isSafeAnchorAttr) {
-          el.removeAttribute(attr.name);
-        }
-      });
-
-      if (el.tagName === 'A') {
-        const href = el.getAttribute('href') ?? '';
+    template.content
+      .querySelectorAll<HTMLAnchorElement>('a')
+      .forEach((anchor) => {
+        const href = anchor.getAttribute('href') ?? '';
         const safeHref = getSafeHref(href, 'iframe');
         if (!safeHref) {
-          el.removeAttribute('href');
+          anchor.removeAttribute('href');
         } else {
-          el.setAttribute('href', safeHref);
+          anchor.setAttribute('href', safeHref);
         }
 
-        const target = el.getAttribute('target');
-        if (target === '_blank') {
-          el.setAttribute(
+        if (anchor.getAttribute('target') === '_blank') {
+          anchor.setAttribute(
             'rel',
             'noopener noreferrer nofollow'
           );
         }
-      }
-    });
+      });
 
     const html = template.innerHTML
       .replace(/\s+/g, ' ')
@@ -710,6 +789,43 @@
     counterEl.textContent = `${Math.max(1, activeIndex + 1)} / ${Math.max(1, slides.length)}`;
   }
 
+  function getAutoplayPlugin() {
+    return (
+      emblaApi?.plugins() as EmblaPluginRegistry | undefined
+    )?.autoplay;
+  }
+
+  function getAccessibilityPlugin() {
+    return (
+      emblaApi?.plugins() as EmblaPluginRegistry | undefined
+    )?.accessibility;
+  }
+
+  function setupAccessibilityUi() {
+    const accessibility = getAccessibilityPlugin();
+    if (!emblaApi || !accessibility) return;
+
+    if (
+      controlSettings.showPrevButton &&
+      controlSettings.showNextButton &&
+      prevButtonEl &&
+      nextButtonEl
+    ) {
+      accessibility.setupPrevAndNextButtons?.(
+        prevButtonEl,
+        nextButtonEl
+      );
+    }
+
+    if (controlSettings.showDots && dotsWrapperEl) {
+      accessibility.setupDotButtons?.(dotsWrapperEl);
+    }
+
+    if (liveRegionEl) {
+      accessibility.setupLiveRegion?.(liveRegionEl);
+    }
+  }
+
   function syncLightboxMetaVisibility(
     activeIndex?: number
   ) {
@@ -818,11 +934,37 @@
   }
 
   function scheduleLightboxSync(activeIndex?: number) {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
+    if (lightboxSyncFrame1) {
+      cancelAnimationFrame(lightboxSyncFrame1);
+    }
+    if (lightboxSyncFrame2) {
+      cancelAnimationFrame(lightboxSyncFrame2);
+    }
+
+    lightboxSyncFrame1 = requestAnimationFrame(() => {
+      lightboxSyncFrame1 = 0;
+      lightboxSyncFrame2 = requestAnimationFrame(() => {
+        lightboxSyncFrame2 = 0;
         syncLightboxMetaVisibility(activeIndex);
       });
     });
+  }
+
+  function preloadSlide(index: number) {
+    const slide = slides[clamp(index)];
+    const src = slide?.src;
+    if (!src || preloadedSlideSrcs.has(src)) return;
+
+    const image = new Image();
+    if (slide.srcSet) image.srcset = slide.srcSet;
+    image.sizes = getImageSizes(slide);
+    image.src = src;
+    preloadedSlideSrcs.add(src);
+  }
+
+  function preloadNearbySlides(index: number) {
+    preloadSlide(index + 1);
+    preloadSlide(index - 1);
   }
 
   function getLightboxElements() {
@@ -980,28 +1122,34 @@
   function syncAutoplayState() {
     if (!emblaApi) return;
 
-    const autoplay = emblaApi.plugins().autoplay;
-    const accessibility = emblaApi.plugins().accessibility;
+    const autoplay = getAutoplayPlugin();
+    const accessibility = getAccessibilityPlugin();
 
     if (!autoplay) return;
 
+    if (!isCarouselInViewport) {
+      autoplay.stop?.();
+      accessibility?.setUpdateLiveRegion?.(true);
+      return;
+    }
+
     if (!featureSettings.autoplay) {
-      autoplay.stop();
+      autoplay.stop?.();
       isAutoplayRunning = false;
-      accessibility?.setUpdateLiveRegion(true);
-      accessibility?.updateLiveRegion();
+      accessibility?.setUpdateLiveRegion?.(true);
+      accessibility?.updateLiveRegion?.();
       return;
     }
 
     if (isAutoplayRunning) {
-      autoplay.play();
-      accessibility?.setUpdateLiveRegion(false);
+      autoplay.play?.();
+      accessibility?.setUpdateLiveRegion?.(false);
       return;
     }
 
-    autoplay.stop();
-    accessibility?.setUpdateLiveRegion(true);
-    accessibility?.updateLiveRegion();
+    autoplay.stop?.();
+    accessibility?.setUpdateLiveRegion?.(true);
+    accessibility?.updateLiveRegion?.();
   }
 
   function onEmblaInit(e: CustomEvent<EmblaCarouselType>) {
@@ -1015,32 +1163,7 @@
     emblaApi.on('reinit', updateButtonStates);
     emblaApi.on('reinit', updateSlidesState);
 
-    if (
-      controlSettings.showPrevButton &&
-      controlSettings.showNextButton &&
-      prevButtonEl &&
-      nextButtonEl
-    ) {
-      emblaApi
-        .plugins()
-        .accessibility?.setupPrevAndNextButtons(
-          prevButtonEl,
-          nextButtonEl
-        );
-    }
-
-    if (controlSettings.showDots && dotsWrapperEl) {
-      emblaApi
-        .plugins()
-        .accessibility?.setupDotButtons(dotsWrapperEl);
-    }
-
-    if (liveRegionEl) {
-      emblaApi
-        .plugins()
-        .accessibility?.setupLiveRegion(liveRegionEl);
-    }
-
+    setupAccessibilityUi();
     isAutoplayRunning = featureSettings.autoplay;
     syncAutoplayState();
   }
@@ -1073,6 +1196,10 @@
       return null;
 
     if (!glightboxLoaded) {
+      if (!glightboxCssLoaded) {
+        await import('glightbox/dist/css/glightbox.css');
+        glightboxCssLoaded = true;
+      }
       const mod = await import('glightbox');
       glightboxFactory = mod.default;
       glightboxLoaded = true;
@@ -1154,8 +1281,65 @@
   }
 
   $effect(() => {
+    if (typeof window === 'undefined') return;
+
+    let cancelled = false;
+    let idleTimer = 0;
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (
+        callback: IdleRequestCallback,
+        options?: IdleRequestOptions
+      ) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    const loadPlugins = async () => {
+      if (featureSettings.autoplay && !autoplayFactory) {
+        const mod = await import('embla-carousel-autoplay');
+        if (cancelled) return;
+        autoplayFactory = mod.default;
+      }
+
+      if (shouldUseAccessibility && !accessibilityFactory) {
+        const mod =
+          await import('embla-carousel-accessibility');
+        if (cancelled) return;
+        accessibilityFactory = mod.default;
+      }
+    };
+
+    if (
+      typeof idleWindow.requestIdleCallback === 'function'
+    ) {
+      idleTimer = idleWindow.requestIdleCallback(
+        () => {
+          void loadPlugins();
+        },
+        { timeout: 400 }
+      );
+    } else {
+      idleTimer = window.setTimeout(() => {
+        void loadPlugins();
+      }, 200);
+    }
+
+    return () => {
+      cancelled = true;
+      if (
+        typeof idleWindow.cancelIdleCallback === 'function'
+      ) {
+        idleWindow.cancelIdleCallback(idleTimer);
+      } else {
+        window.clearTimeout(idleTimer);
+      }
+    };
+  });
+
+  $effect(() => {
     if (!emblaApi) return;
     emblaApi.reInit(mainOptions, plugins);
+    setupAccessibilityUi();
     updateButtonStates();
     updateSlidesState();
     syncAutoplayState();
@@ -1170,13 +1354,58 @@
 
   $effect(() => {
     if (typeof window === 'undefined') return;
-    const update = () => {
-      viewportWidth = window.innerWidth;
+
+    const commitViewportWidth = () => {
+      viewportWidth = Math.round(window.innerWidth);
     };
-    update();
+
+    const update = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(
+        commitViewportWidth,
+        120
+      );
+    };
+
+    commitViewportWidth();
     window.addEventListener('resize', update);
-    return () =>
+
+    return () => {
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', update);
+    };
+  });
+
+  $effect(() => {
+    if (slides.length < 2) return;
+    preloadNearbySlides(selectedSnap);
+  });
+
+  $effect(() => {
+    if (
+      typeof window === 'undefined' ||
+      !carouselRootEl ||
+      !featureSettings.autoplay
+    ) {
+      return;
+    }
+
+    visibilityObserver?.disconnect();
+    visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isCarouselInViewport =
+          entry?.isIntersecting ?? true;
+        syncAutoplayState();
+      },
+      { threshold: 0.2 }
+    );
+
+    visibilityObserver.observe(carouselRootEl);
+
+    return () => {
+      visibilityObserver?.disconnect();
+      visibilityObserver = null;
+    };
   });
 
   $effect(() => {
@@ -1195,8 +1424,24 @@
   });
 
   onMount(() => {
+    void import('dompurify').then((mod) => {
+      domPurify = mod.default;
+      if (lightboxInstance) {
+        lightboxInstance.setElements(getLightboxElements());
+      }
+    });
+
     return () => {
-      emblaApi?.plugins().autoplay?.stop?.();
+      window.clearTimeout(resizeTimer);
+      if (lightboxSyncFrame1) {
+        cancelAnimationFrame(lightboxSyncFrame1);
+      }
+      if (lightboxSyncFrame2) {
+        cancelAnimationFrame(lightboxSyncFrame2);
+      }
+      visibilityObserver?.disconnect();
+      visibilityObserver = null;
+      getAutoplayPlugin()?.stop?.();
       emblaApi?.off('select', updateButtonStates);
       emblaApi?.off('select', updateSlidesState);
       emblaApi?.off('reinit', updateButtonStates);
@@ -1208,7 +1453,27 @@
   });
 </script>
 
+<svelte:head>
+  {#if firstSlideSrc}
+    <link
+      rel="preload"
+      as="image"
+      href={firstSlideSrc}
+      imagesrcset={firstSlideSrcSet}
+      imagesizes={firstSlideSizes}
+    />
+  {/if}
+
+  {#if getExternalOrigin(firstSlideSrc)}
+    <link
+      rel="preconnect"
+      href={getExternalOrigin(firstSlideSrc)}
+    />
+  {/if}
+</svelte:head>
+
 <section
+  bind:this={carouselRootEl}
   class={cx('embla', classNameSettings.root)}
   style={`--embla-inside-edge: ${insideEdgeOffsetPx}px; --embla-thumbs-visible: ${safeThumbsVisibleCount}; --embla-thumb-size: ${thumbsSettings.sizePx}px; --embla-thumb-height: ${thumbsSettings.heightPx}px; --embla-thumb-gap: ${thumbsSettings.gapPx}px; --embla-thumb-spacing: ${thumbsSettings.spacingPx}px; --embla-frame-ratio: ${frameAspectRatio}; --embla-transition-ms: ${transitionDurationSafe};`}
   aria-label={title}
@@ -1620,6 +1885,7 @@
     display: flex;
     touch-action: pan-y pinch-zoom;
     will-change: transform;
+    transform: translate3d(0, 0, 0);
     transition: transform
       calc(var(--embla-transition-ms) * 1ms)
       cubic-bezier(0.22, 1, 0.36, 1);
@@ -1631,6 +1897,7 @@
     position: relative;
     overflow: hidden;
     opacity: 0.82;
+    transform: translateZ(0);
     transition: opacity
       calc(var(--embla-transition-ms) * 1ms) ease;
   }

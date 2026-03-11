@@ -3,7 +3,7 @@
 </script>
 
 <header
-  class="fixed z-2
+  class="fixed z-5
     flex justify-center w-full
     bg-page-bg shadow-md shadow-black/25"
 >

@@ -63,16 +63,21 @@
       caption: 'Документ 5',
     },
   ];
+  const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
+    {
+      heroTransitionDurationMs: 1120,
+      modalSlideTransitionDurationMs: 1100,
+    };
 
-  const educationSlides: EmblaSlide[] =
-    educationGalleryItems.map((item) => ({
-      src: item.src,
-      alt: item.alt ?? 'Зображення',
-      dimensions:
-        item.width && item.height
-          ? { width: item.width, height: item.height }
-          : undefined,
-    }));
+  // const educationSlides: EmblaSlide[] =
+  //   educationGalleryItems.map((item) => ({
+  //     src: item.src,
+  //     alt: item.alt ?? 'Зображення',
+  //     dimensions:
+  //       item.width && item.height
+  //         ? { width: item.width, height: item.height }
+  //         : undefined,
+  //   }));
 
   const docDimensions = {
     width: 1600,
@@ -374,57 +379,22 @@
       <BaseButton variant="primary"
         >Детальніше про освіту
       </BaseButton>
-      <div>
-        <!-- <EmblaCarusel
-          slides={docsSlides}
-          title="Галерея сертифікатів"
-          controls={{
-            showPrevButton: true,
-            showNextButton: true,
-            showPlayButton: false,
-            showDots: true,
-            showStatus: false,
-            spreadSideButtons: true,
-          }}
-          features={{
-            autoplay: false,
-            autoplayDelayMs: 3500,
-            announceChanges: false,
-          }}
-          controlLayout={{
-            placement: 'outside',
-            position: 'middle',
-          }}
-          thumbnails={{
-            enabled: true,
-            position: 'bottom',
-            visibleCount: 2,
-            align: 'start',
-            sizePx: 82,
-            gapPx: 8,
-            spacingPx: 6,
-            hideBelowPx: 980,
-          }}
-          lightbox={{
-            enabled: true,
-            hideBelowPx: 520,
-            openEffect: 'fade',
-            closeEffect: 'fade',
-            slideEffect: 'fade',
-          }}
-          insideEdgeOffset={9}
-          classNames={{
-            root: 'custom-embla-root',
-            controls: 'custom-embla-controls',
-            prevButton: 'custom-embla-prev',
-            nextButton: 'custom-embla-next',
-            playButton: 'custom-embla-play',
-            dots: 'custom-embla-dots',
-            dot: 'custom-embla-dot',
-            dotActive: 'custom-embla-dot-active',
-            status: 'custom-embla-status',
-          }}
-        /> -->
+      <div class="basis-full w-full min-w-0 max-w-[800px]">
+        <PhotoSwipe
+          items={educationGalleryItems}
+          features={educationGalleryFeatures}
+          // classNames={{
+          //   root: 'rounded-xl',
+          //   heroWrap: 'my-hero-wrap',
+          //   heroImage: 'overflow-hidden',
+          //   prevNav: 'bg-white/80',
+          //   nextNav: 'bg-white/80',
+          //   thumbStrip: 'mt-2',
+          //   thumbTrack: 'shadow-sm',
+          //   thumbCard: 'border-slate-300',
+          //   thumbCardActive: 'ring-2 ring-blue-500',
+          // }}
+        />
       </div>
     </div>
   </section>

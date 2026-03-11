@@ -12,12 +12,32 @@
     type GalleryItem,
   } from '$shared/config';
 
+  type GalleryClassNames = {
+    root?: string;
+    heroWrap?: string;
+    heroImage?: string;
+    prevNav?: string;
+    nextNav?: string;
+    thumbStrip?: string;
+    thumbTrack?: string;
+    thumbCard?: string;
+    thumbCardActive?: string;
+  };
+
+  function cx(
+    ...parts: Array<string | null | undefined | false>
+  ) {
+    return parts.filter(Boolean).join(' ');
+  }
+
   let {
     items = productGalleryItems,
     features = {},
+    classNames = {},
   }: {
     items?: GalleryItem[];
     features?: Partial<ProductGalleryFeatures>;
+    classNames?: GalleryClassNames;
   } = $props();
 
   const galleryFeatures = $derived({
@@ -470,17 +490,17 @@
   });
 </script>
 
-<section
-  class="gallery-shell"
+<div
+  class={cx('gallery-shell', classNames.root)}
   aria-label="Галерея товару"
   style={galleryCssVars}
 >
   {#if galleryFeatures.heroPreview && hasItems}
-    <div class="hero-wrap">
+    <div class={cx('hero-wrap', classNames.heroWrap)}>
       {#if galleryFeatures.pageNavigation}
         <button
           type="button"
-          class="page-nav prev"
+          class={cx('page-nav prev', classNames.prevNav)}
           onclick={showPrevOnPage}
           aria-label="Попереднє зображення"
         >
@@ -490,7 +510,7 @@
 
       <button
         type="button"
-        class="hero-image"
+        class={cx('hero-image', classNames.heroImage)}
         onclick={onHeroClick}
         onpointerdown={onHeroPointerDown}
         onpointermove={onHeroPointerMove}
@@ -530,7 +550,7 @@
       {#if galleryFeatures.pageNavigation}
         <button
           type="button"
-          class="page-nav next"
+          class={cx('page-nav next', classNames.nextNav)}
           onclick={showNextOnPage}
           aria-label="Наступне зображення"
         >
@@ -541,12 +561,23 @@
   {/if}
 
   {#if galleryFeatures.thumbnails && hasItems}
-    <div class="thumb-strip-shell">
-      <div class="thumb-track" bind:this={thumbsTrack}>
+    <div
+      class={cx('thumb-strip-shell', classNames.thumbStrip)}
+    >
+      <div
+        class={cx('thumb-track', classNames.thumbTrack)}
+        bind:this={thumbsTrack}
+      >
         {#each safeGalleryItems as item, index}
           <button
             type="button"
-            class={`thumb-card ${index === activeIndex ? 'is-active' : ''}`}
+            class={cx(
+              'thumb-card',
+              classNames.thumbCard,
+              index === activeIndex && 'is-active',
+              index === activeIndex &&
+                classNames.thumbCardActive
+            )}
             data-thumb-index={index}
             aria-label={`Показати ${item.alt || `зображення ${index + 1}`}`}
             onclick={() => {
@@ -568,33 +599,39 @@
       </div>
     </div>
   {/if}
-</section>
+</div>
 
 <style lang="scss">
   :global(.pswp__modal-thumbs) {
     width: fit-content;
   }
   .gallery-shell {
-    width: min(var(--gallery-max-width), 100%);
+    width: 100%;
+    max-width: min(var(--gallery-max-width), 100%);
+    min-width: 0;
+    box-sizing: border-box;
     margin: 0 auto;
     display: grid;
     gap: var(--gallery-gap);
   }
 
   .hero-wrap {
+    position: relative;
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 12px;
     align-items: center;
+    min-width: 0;
   }
 
   .hero-image {
     position: relative;
     width: 100%;
+    min-width: 0;
     aspect-ratio: var(--hero-aspect-ratio);
-    max-height: var(--hero-max-height);
+    max-height: min(var(--hero-max-height), 55svh);
     border: 1px solid rgba(18, 26, 42, 0.1);
-    border-radius: 18px;
+    border-radius: clamp(10px, 2vw, 18px);
     overflow: hidden;
     padding: 0;
     background: #fff;
@@ -641,13 +678,14 @@
 
   .thumb-strip-shell {
     display: block;
+    min-width: 0;
   }
 
   .thumb-track {
     display: flex;
     align-items: center;
     gap: var(--thumb-gap);
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
@@ -667,6 +705,7 @@
     );
     margin: 0 auto;
     padding: 8px;
+    box-sizing: border-box;
     border-radius: 14px;
     background: linear-gradient(180deg, #f8faff, #eef3ff);
     border: 1px solid rgba(18, 26, 42, 0.09);
@@ -726,25 +765,95 @@
 
   @media (max-width: 1024px) {
     .thumb-card {
-      flex-basis: calc(var(--thumb-min-width) - 12px);
+      flex-basis: calc(var(--thumb-min-width) - 10px);
     }
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 750px) {
+    .hero-image {
+      max-height: min(var(--hero-max-height), 46svh);
+    }
+
     .hero-wrap {
-      grid-template-columns: 1fr;
+      display: block;
     }
 
     .page-nav {
-      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+
+      &.prev {
+        left: 8px;
+      }
+      &.next {
+        right: 8px;
+      }
+
+      &:hover {
+        transform: translateY(calc(-50% - 1px));
+      }
     }
 
     .thumb-track {
       width: 100%;
+      max-width: 100%;
     }
 
     .thumb-card {
-      flex-basis: calc(var(--thumb-min-width) - 18px);
+      flex-basis: calc(var(--thumb-min-width) - 16px);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .gallery-shell {
+      padding-inline: 6px;
+    }
+
+    .hero-image {
+      max-height: min(var(--hero-max-height), 40svh);
+    }
+
+    .thumb-track {
+      width: 100%;
+      max-width: 100%;
+      padding: 6px;
+    }
+
+    .thumb-card {
+      flex: 0 0 clamp(48px, 22vw, 66px);
+    }
+
+    .page-nav {
+      width: 30px;
+      height: 30px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .page-nav {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+
+      &.prev {
+        left: 4px;
+      }
+      &.next {
+        right: 4px;
+      }
+    }
+
+    .thumb-card {
+      flex-basis: calc(var(--thumb-min-width) - 22px);
     }
   }
 
@@ -828,22 +937,3 @@
     }
   }
 </style>
-
- <!-- <PhotoSwipe
-          items={educationGalleryItems}
-          features={educationGalleryFeatures}
-        /> -->
-
-        <!-- <EmblaCarusel
-          slides={educationSlides}
-          title="Освітня галерея"
-          controls={{
-            showPlayButton: false,
-            showStatus: true,
-          }}
-          features={{
-            autoplay: false,
-            loop: true,
-          }}
-          animationEffect="fade"
-        /> -->
