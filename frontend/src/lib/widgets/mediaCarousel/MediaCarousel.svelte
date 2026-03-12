@@ -480,7 +480,7 @@
     resize: true,
     slideChanges: true,
     skipSnaps: false,
-    duration: 54,
+    duration: emblaDuration,
   });
 
   const thumbsOptions = $derived<EmblaOptionsType>({
@@ -539,6 +539,10 @@
 
   const transitionDurationSafe = $derived(
     Math.max(120, Math.round(transitionDurationMs))
+  );
+
+  const emblaDuration = $derived(
+    Math.max(10, Math.round(transitionDurationSafe / 40))
   );
 
   const firstSlide = $derived(slides[0]);
@@ -1028,16 +1032,27 @@
     });
   }
 
+  function resetAutoplayTimer() {
+    if (!featureSettings.autoplay || !isAutoplayRunning) return;
+    const autoplay = getAutoplayPlugin();
+    if (!autoplay) return;
+    autoplay.stop?.();
+    autoplay.play?.();
+  }
+
   function scrollPrev() {
     emblaApi?.goToPrev();
+    resetAutoplayTimer();
   }
 
   function scrollNext() {
     emblaApi?.goToNext();
+    resetAutoplayTimer();
   }
 
   function scrollTo(index: number) {
     emblaApi?.goTo(index);
+    resetAutoplayTimer();
   }
 
   function toggleAutoplay() {
@@ -1165,6 +1180,8 @@
     emblaApi.on('select', updateSlidesState);
     emblaApi.on('reinit', updateButtonStates);
     emblaApi.on('reinit', updateSlidesState);
+
+    emblaApi.on('pointerUp', resetAutoplayTimer);
 
     setupAccessibilityUi();
     isAutoplayRunning = featureSettings.autoplay;
@@ -1478,6 +1495,7 @@
       emblaApi?.off('select', updateSlidesState);
       emblaApi?.off('reinit', updateButtonStates);
       emblaApi?.off('reinit', updateSlidesState);
+      emblaApi?.off('pointerUp', resetAutoplayTimer);
       thumbsApi?.off('reinit', syncThumbsToMain);
       lightboxInstance?.destroy?.();
       lightboxInstance = null;
@@ -1900,3 +1918,13 @@
     aria-atomic="true"
   ></div>
 </div>
+
+
+
+
+
+
+
+
+
+

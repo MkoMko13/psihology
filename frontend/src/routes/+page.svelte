@@ -261,7 +261,7 @@
       > -->
       <EmblaCarusel
         slides={docsSlides}
-        transitionDurationMs={1000}
+        transitionDurationMs={1300}
         title="Галерея сертифікатів"
         controls={{
           showPrevButton: true,
@@ -294,7 +294,7 @@
         lightbox={emblaLightboxSettings}
         insideEdgeOffset={202}
         classNames={{
-          root: 'max-w-100',
+          root: 'max-w-180',
           controls: 'custom-embla-controls',
           prevButton: 'custom-embla-prev',
           nextButton: 'custom-embla-next',
@@ -307,11 +307,11 @@
       />
       <!-- </div> -->
 
-      <ul class="flex flex-col gap-3 max-w-[400px]">
+      <ul class="flex flex-col gap-3 max-w-[400px] pl-7">
         <ListItem
           children={educationContent.text}
           direction="left"
-          gap={20}
+          // gap={20}
           // {icons}
         />
       </ul>
@@ -363,7 +363,7 @@
           before:-z-10
           before:content-['']
           before:absolute
-          before:-right-6 before:-bottom-6
+          before:-right-4 before:-bottom-4
           before:w-[100%] before:h-full
           before:bg-gradient-to-b before:from-[#BCA66D] before:via-white before:to-[#BCA66D]
           before:rounded-full
@@ -373,7 +373,7 @@
           <img
             alt=""
             src={`${base}/images/Natalia_Sukhachova.jpg`}
-            class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[120px]"
+            class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[85px]"
           />
         </div>
       </div>
