@@ -48,8 +48,8 @@
           <div
             {...props}
             transition:slide={{ duration: 1200 }}
-            class="space-y-3 px-6 pb-6 pt-2 text-center text-neutral-700 absolute w-[900px] min-w-[300px] bg-secondary
-             right-1/2 translate-x-1/2 "
+            class="z-1 space-y-3 px-6 pb-6 pt-2 text-center text-neutral-700 absolute w-[900px] min-w-[300px] bg-secondary
+             right-1/2 translate-x-1/2 rounded-2xl text-white"
           >
             {#each items as item, i (i)}
               <p>{item.content}</p>

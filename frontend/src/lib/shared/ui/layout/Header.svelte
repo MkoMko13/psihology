@@ -2,40 +2,86 @@
   import { base } from '$app/paths';
   import '$lib/app/styles/layout/header.css';
 
-  const handleAnchorClick = (event: MouseEvent) => {
-    const link =
-      event.currentTarget instanceof HTMLAnchorElement
-        ? event.currentTarget
-        : event.target instanceof Element
-          ? event.target.closest('a')
-          : null;
+  let animationFrameId: number | null = null;
 
-    if (!(link instanceof HTMLAnchorElement)) return;
+  const easeInOutCubic = (progress: number) => {
+    return progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+  };
 
-    const href = link.getAttribute('href') ?? '';
-    if (!href.startsWith('#')) return;
+  const animateScrollTo = (
+    scrollContainer: Element,
+    targetTop: number,
+    durationMs = 1350
+  ) => {
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+    }
 
-    const id = href.slice(1);
+    const startTop = scrollContainer.scrollTop;
+    const delta = targetTop - startTop;
+
+    if (Math.abs(delta) < 1) {
+      scrollContainer.scrollTop = targetTop;
+      return;
+    }
+
+    const startTime = performance.now();
+
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+      const easedProgress = easeInOutCubic(progress);
+
+      scrollContainer.scrollTop =
+        startTop + delta * easedProgress;
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+        return;
+      }
+
+      animationFrameId = null;
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+  };
+
+  const smoothScrollTo = (
+    event: MouseEvent,
+    id: string
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const target = document.getElementById(id);
     if (!target) return;
 
-    event.preventDefault();
-
-    const header = document.querySelector('header');
+    const headerEl = document.querySelector('header');
     const headerOffset =
-      header?.getBoundingClientRect().height ?? 0;
+      headerEl?.getBoundingClientRect().height ?? 0;
     const targetTop =
       target.getBoundingClientRect().top +
       window.scrollY -
       headerOffset -
       8;
 
-    window.scrollTo({
-      top: Math.max(targetTop, 0),
-      behavior: 'smooth',
-    });
+    const scrollContainer =
+      document.scrollingElement ?? document.documentElement;
 
-    history.replaceState(null, '', `#${id}`);
+    animateScrollTo(
+      scrollContainer,
+      Math.max(targetTop, 0)
+    );
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    if (reduceMotion) {
+      scrollContainer.scrollTop = targetTop;
+      return;
+    }
   };
 </script>
 
@@ -81,35 +127,40 @@
     </div>
 
     <nav>
-      <ul class="flex gap-6 font-bold uppercase text-base">
+      <ul class="flex gap-6 font-bold text-base">
         <li>
-          <a
-            href="#main"
-            class="menu-link"
-            onclick={handleAnchorClick}
+          <button
+            type="button"
+            class="menu-link cursor-pointer"
+            onclick={(e) => smoothScrollTo(e, 'main')}
           >
             Головна
-          </a>
+          </button>
         </li>
 
         <li>
-          <a
-            href="#education"
-            class="menu-link"
-            onclick={handleAnchorClick}>Про мене</a
+          <button
+            type="button"
+            class="menu-link cursor-pointer"
+            onclick={(e) => smoothScrollTo(e, 'education')}
+            >Про мене</button
+          >
+        </li>
+
+        <li>
+          <button
+            type="button"
+            class="menu-link cursor-pointer"
+            onclick={(e) =>
+              smoothScrollTo(e, 'consultation')}
+            >Консультації</button
           >
         </li>
 
         <li>
           <a
-            href="#consultation"
-            class="menu-link"
-            onclick={handleAnchorClick}>Консультації</a
-          >
-        </li>
-
-        <li>
-          <a href={`${base}/`} class="menu-link">Контакти</a
+            href={`${base}/`}
+            class="menu-link cursor-pointer">Контакти</a
           >
         </li>
       </ul>

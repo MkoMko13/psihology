@@ -1,6 +1,6 @@
 @reference "../global.scss";
  .menu-link {
-    @apply relative
+    @apply relative uppercase
   transition-colors duration-200
   hover:text-secondary
   focus-visible:text-secondary
