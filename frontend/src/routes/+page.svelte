@@ -345,19 +345,21 @@
   <Section>
     <Container>
       <Heading level={2} className="mb-8">Досвід</Heading>
-    <div class="flex flex-wrap justify-center gap-20 items-center max-w-screen-xl">
-      <ul class="flex flex-col gap-3 max-w-[600px]">
-        <ListItem
-          children={experiensContent.listItems}
-          icons={experiensContent.icons}
-          direction="left"
-          className="bg-lightBg rounded-xl px-5 py-2"
-          iconSize={75}
-          gap={25}
-        />
-      </ul>
       <div
-        class="relative overflow-hidden max-w-100
+        class="flex flex-wrap justify-center gap-20 items-center max-w-screen-xl"
+      >
+        <ul class="flex flex-col gap-3 max-w-[600px]">
+          <ListItem
+            children={experiensContent.listItems}
+            icons={experiensContent.icons}
+            direction="left"
+            className="bg-lightBg rounded-xl px-5 py-2"
+            iconSize={75}
+            gap={25}
+          />
+        </ul>
+        <div
+          class="relative overflow-hidden max-w-100
           before:-z-10
           before:content-['']
           before:absolute
@@ -367,67 +369,73 @@
           before:rounded-full
           before:shadow-[0_0_10px_rgba(0,0,0,0.55)]
           before:rounded-tl-[50%] before:rounded-bl-[50%] before:rounded-tr-[50px] before:rounded-br-[50px]"
-      >
-        <img
-          alt=""
-          src={`${base}/images/Natalia_Sukhachova.jpg`}
-          class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[120px]"
-        />
+        >
+          <img
+            alt=""
+            src={`${base}/images/Natalia_Sukhachova.jpg`}
+            class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[120px]"
+          />
+        </div>
       </div>
-    </div>
     </Container>
   </Section>
 
   <Section>
     <Container className="flex gap-4">
       <div
-        class="flex flex-col  gap-3 items-center
+        class="flex flex-col gap-3 items-center
             max-w-80 py-8 px-5
             bg-secBg rounded-2xl"
-    >
-      <Heading level={3}>Домовленість</Heading>
-      <p>
-        Цей документ визначає основні правила співпраці між
-        психологом та клієнтом, описує права та обов’язки
-        сторін, а також етичні принципи надання
-        психологічної допомоги. Він допомагає зрозуміти, як
-        відбуватиметься процес консультацій і що очікувати
-        від взаємодії.
-      </p>
-      <a href="/" class="self-start">Читати далі</a>
-    </div>
-    <div
-      class="flex flex-col  gap-3 items-center
-          max-w-80 py-8 px-5
-          bg-secBg rounded-2xl"
-    >
-      <Heading level={3}
-        >Як підготуватися до консультації</Heading
       >
-      <p>
-        Підготовка до консультації допомагає максимально
-        ефективно використати час сеансу. Тут описані
-        рекомендації, як сформулювати питання, підготувати
-        власні думки та очікування, а також як створити
-        комфортне середовище для роботи з психологом.
-      </p>
-      <a href="/" class="self-start">Читати далі</a>
-    </div>
-    <div
-      class="flex flex-col  gap-3 items-center
+        <Heading level={3}>Домовленість</Heading>
+        <p>
+          Цей документ визначає основні правила співпраці
+          між психологом та клієнтом, описує права та
+          обов’язки сторін, а також етичні принципи надання
+          психологічної допомоги. Він допомагає зрозуміти,
+          як відбуватиметься процес консультацій і що
+          очікувати від взаємодії.
+        </p>
+        <a href={`${base}/`} class="self-start"
+          >Читати далі</a
+        >
+      </div>
+      <div
+        class="flex flex-col gap-3 items-center
           max-w-80 py-8 px-5
           bg-secBg rounded-2xl"
-    >
-      <Heading level={3}>Вартість і оплата</Heading>
-      <p>
-        У цьому розділі детально описані тарифи на
-        психологічні послуги, можливі способи оплати, умови
-        скасування та перенесення сеансів. Це допомагає
-        клієнту планувати консультації та уникати
-        непорозумінь щодо фінансових питань.
-      </p>
-      <a href="/" class="self-start">Читати далі</a>
-    </div>
+      >
+        <Heading level={3}
+          >Як підготуватися до консультації</Heading
+        >
+        <p>
+          Підготовка до консультації допомагає максимально
+          ефективно використати час сеансу. Тут описані
+          рекомендації, як сформулювати питання, підготувати
+          власні думки та очікування, а також як створити
+          комфортне середовище для роботи з психологом.
+        </p>
+        <a href={`${base}/`} class="self-start"
+          >Читати далі</a
+        >
+      </div>
+      <div
+        class="flex flex-col gap-3 items-center
+          max-w-80 py-8 px-5
+          bg-secBg rounded-2xl"
+      >
+        <Heading level={3}>Вартість і оплата</Heading>
+        <p>
+          У цьому розділі детально описані тарифи на
+          психологічні послуги, можливі способи оплати,
+          умови скасування та перенесення сеансів. Це
+          допомагає клієнту планувати консультації та
+          уникати непорозумінь щодо фінансових питань.
+        </p>
+        <a href={`${base}/`} class="self-start"
+          >Читати далі</a
+        >
+      </div>
     </Container>
   </Section>
 </Main>
