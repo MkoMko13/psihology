@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Accordion } from 'bits-ui';
   import { slide } from 'svelte/transition';
-  import {variants} from '$shared/ui/buttons/constants'
+  import {sizes, variants} from '$shared/ui/buttons/constants'
   // Визначаємо інтерфейс для елемента акордеону
   interface AccordionItem {
     content: string;
@@ -11,7 +11,6 @@
   let {
     accordTitle = 'Default Title',
     items = [],
-    variant = '',
   } = $props<{
     accordTitle?: string;
     items: AccordionItem[];
@@ -21,6 +20,7 @@
 
 <Accordion.Root
   type="single"
+  class="relative"
 >
   <Accordion.Item
     value="item-1"
@@ -28,11 +28,10 @@
   >
     <Accordion.Header class="flex justify-center">
       <Accordion.Trigger
-        class="{variants.primary}
-        flex items-center justify-center gap-2 
-        rounded-2xl 
-        px-6 py-4 text-center text-lg font-medium 
-        [&[data-state=open]>span]:rotate-180 "
+        class="{variants.primary} {sizes.md}
+          flex items-center justify-center gap-2 
+          text-center
+          [&[data-state=open]>span]:rotate-180"
       >
         {accordTitle}
         <span
@@ -48,7 +47,8 @@
           <div
             {...props}
             transition:slide={{ duration: 1200 }}
-            class="space-y-3 px-6 pb-6 pt-2 text-center text-neutral-700"
+            class="space-y-3 px-6 pb-6 pt-2 text-center text-neutral-700 absolute w-[900px] min-w-[300px] bg-secondary
+             right-1/2 translate-x-1/2 "
           >
             {#each items as item, i (i)}
               <p>{item.content}</p>

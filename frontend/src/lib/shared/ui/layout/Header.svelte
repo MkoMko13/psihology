@@ -6,8 +6,9 @@
 <header
   class="fixed z-5
     flex justify-center w-full pt-[35px] pb-[5px] px-5
-    shadow-md shadow-black/25
-    before:absolute before:inset-0 before:top-0 before:h-[30px] before:bg-darkBg"
+    shadow-md shadow-black/25 bg-white
+    before:absolute before:inset-0 before:top-0 before:h-[30px] 
+    before:bg-darkBg"
 >
   <div
     class="flex justify-between items-center

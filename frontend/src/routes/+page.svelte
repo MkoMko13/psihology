@@ -16,6 +16,7 @@
     ProductGalleryFeatures,
   } from '$shared/config';
   import { docsSlides } from '$lib/assets/docs';
+  import Section from '$shared/ui/typography/Section.svelte';
 
   // DATA
   // PhotoSwipe
@@ -150,50 +151,67 @@
       content: `✔ Авторський курс з практичної психології «Особливості використання метафоричних асоціативних карт в психологічному консультуванні». Сертифікат (Житомир, 2018).`,
     },
   ];
+  //NEW
+  const icons = ['⭐', '🔥', '🌟'];
+  const educationContent = {
+    text: [
+      '2017-2020 НПУ ім. М. Драгоманова; Вчитель початкових класів, практичний психолог.',
+      '2024-2025 магістратура Український державнийуніверситет ім. М. Драгоманова; факультет спеціальної та інклюзивної освіти, кафедра спеціальної психології та медицини, освітня програма “Клінічний психолог”',
+    ],
+  };
 </script>
 
 <Main>
-  <section class="flex flex-col items-center bg-page-bg">
+  <Section>
     <div
       class="relative z-1
-        flex justify-center
-        w-full h-[400px] p-12"
+        flex flex-col items-center gap-3
+        w-full max-w-[700px]"
     >
       <div
-        class="absolute
-          flex flex-col items-center justify-center gap-2
-          w-full max-w-[700px] p-4
-          font-semibold text-center
+        style={`background-image: url('${base}/images/bg/peace.png');`}
+        class="flex flex-col items-center justify-center gap-2
+          w-full min-h-[300px]
+          font-bold text-center
           border rounded-xl
-          bg-muted-accent text-content-primary"
+          text-content-primary
+          bg-cover bg-top"
+      ></div>
+      <div
+        class="flex flex-col items-center gap-3 text-center"
       >
-        <!-- <div
-          class="w-[400px] h-auto
-            bg-fixed bg-top bg-no-repeat bg-contain
-            aspect-video rounded-xl"
-          style={`background-image: url('${base}/images/bg/peace.png');`}
-        ></div> -->
-        <p>
+        <p
+          class="odd:text-black even:text-secondaryLight font-bold text-base"
+        >
           ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
           ЖИТТІ?!
         </p>
-        <p>
+        <p
+          class="odd:text-black even:text-secondaryLight font-bold text-sm"
+        >
           ВАШІ ДУМКИ, ЕМОЦІЇ, ВІДЧУТТЯ У ТІЛІ ТА ПОВЕДІНКА —
           УСЕ ЦЕ ВЗАЄМОПОВ’ЯЗАНО!
         </p>
-        <p>
+        <p
+          class="odd:text-black even:text-secondaryLight font-bold text-sm"
+        >
           ЗАПИШІТЬСЯ НА КОНСУЛЬТАЦІЮ ДО МЕНЕ, ПСИХОЛОГИНІ,
           ЯКА КОНСУЛЬТУЄ У МЕТОДІ КОГНІТИВНО-ПОВЕДІНКОВОЇ
           ТЕРАПІЇ НИЗЬКОЇ ІНТЕНСИВНОСТІ
         </p>
-        <p>ПОЧНІТЬ ТВОРИТИ СВОЄ ЩАСЛИВЕ СЬОГОДНІ!</p>
+        <p
+          class="odd:text-black even:text-secondaryLight font-bold text-base"
+        >
+          ПОЧНІТЬ ТВОРИТИ СВОЄ ЩАСЛИВЕ СЬОГОДНІ!
+        </p>
+        <BaseButton size="lg"
+          >Записатися на консультацію</BaseButton
+        >
       </div>
     </div>
-  </section>
+  </Section>
 
-  <section
-    class="flex flex-col items-center pt-20 bg-accent-100"
-  >
+  <Section className="bg-lightBg">
     <Heading level={2} className="mb-8">Освіта</Heading>
     <div
       class="flex flex-wrap items-center justify-center gap-5
@@ -250,19 +268,14 @@
       />
       <!-- </div> -->
 
-      <div class="flex flex-wrap gap-3 max-w-[400px]">
-        <ListItem>
-          2017-2020 НПУ ім. М. Драгоманова; Вчитель
-          початкових класів, практичний психолог.
-        </ListItem>
-        <ListItem>
-          2024-2025 магістратура Український державний
-          університет ім. М. Драгоманова; факультет
-          спеціальної та інклюзивної освіти, кафедра
-          спеціальної психології та медицини, освітня
-          програма “Клінічний психолог”
-        </ListItem>
-      </div>
+      <ul class="flex flex-col gap-3 max-w-[400px]">
+        <ListItem
+          children={educationContent.text}
+          direction="left"
+          gap={20}
+          {icons}
+        />
+      </ul>     
 
       <BitAccordion
         accordTitle="Детальніше про освіту"
@@ -287,5 +300,9 @@
         />
       </div> -->
     </div>
-  </section>
+  </Section>
+
+  <Section>
+    <Heading level={2}>Досвід</Heading>
+  </Section>
 </Main>

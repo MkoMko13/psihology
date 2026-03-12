@@ -13,7 +13,10 @@ export default {
         // --- Фонові кольори ---
 
         secondary: '#144249',
+        secondaryLight: '#6d7a66',
         darkBg: '#1E5459',
+        lightBg: '#EFF2F6',
+
         // tertiary: 'var(--bg-tertiary)',
         // elevated: 'var(--bg-elevated)',
         // overlay: 'var(--bg-overlay)',
@@ -94,9 +97,24 @@ export default {
 
       fontSize: {
         // caption: ['clamp(0.75rem, 2vw + 0.25rem, 0.875rem)', { lineHeight: '1rem' }],
-        // 'base-sm': ['clamp(0.875rem, 2.5vw + 0.3rem, 1rem)', { lineHeight: '1.25rem' }],
-        base: ['clamp(1rem, 3vw + 0.4rem, 1.125rem)', { lineHeight: '1.5rem' }],
-        // h4: ['clamp(1.125rem, 4vw + 0.5rem, 1.5rem)', { lineHeight: '1.75rem' }],
+        baseSm: [
+          'clamp(0.875rem, 2.5vw + 0.3rem, 1rem)',
+          { lineHeight: '1.25rem' },
+        ],
+        baseMd: [
+          'clamp(0.965rem, 2.7vw + 0.35rem, 1.100rem)',
+          { lineHeight: '1.3rem' },
+        ],
+        base: [
+          'clamp(1rem, 3vw + 0.4rem, 1.125rem)',
+          { lineHeight: '1.5rem' },
+        ],
+
+        h4: [
+          'clamp(1.125rem, 4vw + 0.5rem, 1.5rem)',
+          { lineHeight: '1.75rem' },
+        ],
+
         // h3: ['clamp(1.5rem, 5vw + 0.75rem, 2.25rem)', { lineHeight: '2rem' }],
         h2: [
           'clamp(2rem, 6vw + 1rem, 3rem)',
