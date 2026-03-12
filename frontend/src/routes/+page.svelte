@@ -11,7 +11,7 @@
   import Heading from '$shared/ui/typography/Heading.svelte';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
-  import { docsSlides } from '$lib/assets/docs';
+  import { docsSlides, docsGalleryItems } from '$lib/assets/docs';
   import Section from '$shared/ui/typography/Section.svelte';
   // Types
   import type {
@@ -26,51 +26,12 @@
     School,
   } from '@lucide/svelte';
   import Container from '$shared/ui/typography/Container.svelte';
+  // Assets (imagetools)
+  import { linesBg, peaceBg, nataliaPicture } from '$lib/assets/images';
 
   // DATA
   // PhotoSwipe
-  const educationGalleryItems: GalleryItem[] = [
-    {
-      src: `${base}/images/docs/doc1.jpg`,
-      thumbSrc: `${base}/images/docs/doc1.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 1',
-      caption: 'Документ 1',
-    },
-    {
-      src: `${base}/images/docs/doc2.jpg`,
-      thumbSrc: `${base}/images/docs/doc2.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 2',
-      caption: 'Документ 2',
-    },
-    {
-      src: `${base}/images/docs/doc3.jpg`,
-      thumbSrc: `${base}/images/docs/doc3.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 3',
-      caption: 'Документ 3',
-    },
-    {
-      src: `${base}/images/docs/doc4.jpg`,
-      thumbSrc: `${base}/images/docs/doc4.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 4',
-      caption: 'Документ 4',
-    },
-    {
-      src: `${base}/images/docs/doc5.jpg`,
-      thumbSrc: `${base}/images/docs/doc5.jpg`,
-      width: 1600,
-      height: 1100,
-      alt: 'Документ 5',
-      caption: 'Документ 5',
-    },
-  ];
+  const educationGalleryItems: GalleryItem[] = docsGalleryItems;
 
   const educationGalleryFeatures: Partial<ProductGalleryFeatures> =
     {
@@ -180,7 +141,8 @@
 </script>
 
 <Main id="main">
-  <Section 
+  <Section
+    style={`--lines-bg: url('${linesBg}')`}
     className="relative overflow-hidden
       before:z-1
       before:content-['']
@@ -188,10 +150,11 @@
       before:-top-20 before:bg-top
       before:-left-[20%]
       before:w-[50%] before:h-[110%]
-      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[30deg]
+      before:[background-image:var(--lines-bg)] before:bg-no-repeat before:rotate-[30deg]
       "
   >
     <div
+      style={`--lines-bg: url('${linesBg}')`}
       class="overflow-hidden
       before:-z-1
       before:content-['']
@@ -199,7 +162,7 @@
       before:-top-0 before:bg-top
       before:-right-[8%]
       before:w-[50%] before:h-[110%]
-      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[-35deg]"
+      before:[background-image:var(--lines-bg)] before:bg-no-repeat before:rotate-[-35deg]"
     >
       <div
         class="relative z-1
@@ -207,7 +170,7 @@
         w-full max-w-[700px]"
       >
         <div
-          style={`background-image: url('${base}/images/bg/peace.png');`}
+          style={`background-image: url('${peaceBg}')`}
           class="flex flex-col items-center justify-center gap-2
           w-full min-h-[300px]
           font-bold text-center
@@ -370,11 +333,23 @@
           before:shadow-[0_0_10px_rgba(0,0,0,0.55)]
           before:rounded-tl-[50%] before:rounded-bl-[50%] before:rounded-tr-[50px] before:rounded-br-[50px]"
         >
-          <img
-            alt=""
-            src={`${base}/images/Natalia_Sukhachova.jpg`}
-            class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[85px]"
-          />
+          <picture>
+  <source
+    srcset={nataliaPicture.sources.avif}
+    type="image/avif"
+  />
+  <source
+    srcset={nataliaPicture.sources.webp}
+    type="image/webp"
+  />
+  <img
+    alt=""
+    src={nataliaPicture.img.src}
+    width={nataliaPicture.img.w}
+    height={nataliaPicture.img.h}
+    class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[85px]"
+  />
+</picture>
         </div>
       </div>
     </Container>
@@ -439,3 +414,26 @@
     </Container>
   </Section>
 </Main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

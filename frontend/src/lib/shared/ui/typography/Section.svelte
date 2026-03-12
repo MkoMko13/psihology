@@ -5,14 +5,24 @@
   let {
     className = '',
     id = '',
+    style = '',
     children,
-  }: { className?: string; id?: string; children?: Snippet } = $props();
+    ...rest
+  }: {
+    className?: string;
+    id?: string;
+    style?: string;
+    children?: Snippet;
+    [key: string]: unknown;
+  } = $props();
 
 </script>
 
 <section
   {id}
+  style={style}
   class={`flex flex-col items-center py-20 px-10 ${className.trim()}`}
+  {...rest}
 >
   {@render children?.()}
 </section>

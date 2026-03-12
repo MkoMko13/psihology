@@ -13,6 +13,7 @@
  */
 
 import type { EmblaSlide } from '$widgets/mediaCarousel';
+import type { GalleryItem } from '$shared/config';
 
 // в”Ђв”Ђв”Ђ Full-quality images вЂ” 3 responsive widths, WebP + AVIF в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 // TS bundler mode may fail to resolve query-based asset imports in plain .ts
@@ -39,6 +40,18 @@ import doc3Thumb from './raw/doc3.jpg?w=200&format=webp&as=url';
 import doc4Thumb from './raw/doc4.jpg?w=200&format=webp&as=url';
 // @ts-expect-error Vite imagetools query import
 import doc5Thumb from './raw/doc5.jpg?w=200&format=webp&as=url';
+
+// --- Full-size WebP for PhotoSwipe (single URL) ----------------------------
+// @ts-expect-error Vite imagetools query import
+import doc1Full from './raw/doc1.jpg?w=1600&format=webp&as=url';
+// @ts-expect-error Vite imagetools query import
+import doc2Full from './raw/doc2.jpg?w=1600&format=webp&as=url';
+// @ts-expect-error Vite imagetools query import
+import doc3Full from './raw/doc3.jpg?w=1600&format=webp&as=url';
+// @ts-expect-error Vite imagetools query import
+import doc4Full from './raw/doc4.jpg?w=1600&format=webp&as=url';
+// @ts-expect-error Vite imagetools query import
+import doc5Full from './raw/doc5.jpg?w=1600&format=webp&as=url';
 
 // в”Ђв”Ђв”Ђ Types в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 
@@ -99,3 +112,54 @@ export const docsSlides: EmblaSlide[] = [
     description: 'РџСЂРёРєР»Р°Рґ СЃР»Р°Р№РґСѓ 5.',
   }),
 ];
+
+
+
+export const docsGalleryItems: GalleryItem[] = [
+  {
+    src: doc1Full,
+    thumbSrc: doc1Thumb,
+    width: 1600,
+    height: 1100,
+    alt: 'Документ 1',
+    caption: 'Документ 1',
+  },
+  {
+    src: doc2Full,
+    thumbSrc: doc2Thumb,
+    width: 1600,
+    height: 1100,
+    alt: 'Документ 2',
+    caption: 'Документ 2',
+  },
+  {
+    src: doc3Full,
+    thumbSrc: doc3Thumb,
+    width: 1600,
+    height: 1100,
+    alt: 'Документ 3',
+    caption: 'Документ 3',
+  },
+  {
+    src: doc4Full,
+    thumbSrc: doc4Thumb,
+    width: 1600,
+    height: 1100,
+    alt: 'Документ 4',
+    caption: 'Документ 4',
+  },
+  {
+    src: doc5Full,
+    thumbSrc: doc5Thumb,
+    width: 1600,
+    height: 1100,
+    alt: 'Документ 5',
+    caption: 'Документ 5',
+  },
+];
+
+
+
+
+
+
