@@ -1,8 +1,19 @@
 {
-  "tailwindCSS.experimental.configFile": "frontend/tailwind.config.js",
+  "tailwindCSS.experimental.configFile": {
+    "frontend/src/lib/app/styles/global.scss": "frontend/src/**"
+  },
+  "tailwindCSS.classAttributes": ["class", "className"],
   "tailwindCSS.includeLanguages": {
     "svelte": "html"
   },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.includeLanguages": {
+    "svelte": "html"
+  },
+  "editor.autoClosingTags": "always",
   "files.associations": {
     "*.css": "tailwindcss",
     "*.scss": "tailwindcss"

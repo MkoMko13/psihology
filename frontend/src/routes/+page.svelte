@@ -25,6 +25,7 @@
     BookOpen,
     School,
   } from '@lucide/svelte';
+  import Container from '$shared/ui/typography/Container.svelte';
 
   // DATA
   // PhotoSwipe
@@ -180,24 +181,25 @@
 
 <Main>
   <Section
-    className="relative
-      before:-z-1
+    className="relative overflow-hidden
+      before:z-1
       before:content-['']
       before:absolute
-      before:-top-10
-      before:-left-95
-      before:w-[50%] before:h-[100%]
-      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[25deg]"
+      before:-top-20 before:bg-top
+      before:-left-[20%]
+      before:w-[50%] before:h-[110%]
+      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[30deg]
+      "
   >
     <div
-      class="mydiv
+      class="overflow-hidden
       before:-z-1
       before:content-['']
       before:absolute
-      before:-top-0
-      before:-right-70
-      before:w-[50%] before:h-[100%]
-      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[-25deg]"
+      before:-top-0 before:bg-top
+      before:-right-[8%]
+      before:w-[50%] before:h-[110%]
+      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[-35deg]"
     >
       <div
         class="relative z-1
@@ -292,7 +294,7 @@
         lightbox={emblaLightboxSettings}
         insideEdgeOffset={202}
         classNames={{
-          root: 'max-w-180',
+          root: 'max-w-100',
           controls: 'custom-embla-controls',
           prevButton: 'custom-embla-prev',
           nextButton: 'custom-embla-next',
@@ -317,6 +319,7 @@
       <BitAccordion
         accordTitle="Детальніше про освіту"
         items={accordionItems}
+        className="w-full"
       />
 
       <!-- <div class="basis-full w-full min-w-0 max-w-[800px]">
@@ -340,8 +343,9 @@
   </Section>
 
   <Section>
-    <Heading level={2} className="mb-8">Досвід</Heading>
-    <div class="flex gap-20 items-center max-w-screen-xl">
+    <Container>
+      <Heading level={2} className="mb-8">Досвід</Heading>
+    <div class="flex flex-wrap justify-center gap-20 items-center max-w-screen-xl">
       <ul class="flex flex-col gap-3 max-w-[600px]">
         <ListItem
           children={experiensContent.listItems}
@@ -353,7 +357,7 @@
         />
       </ul>
       <div
-        class="relative
+        class="relative overflow-hidden max-w-100
           before:-z-10
           before:content-['']
           before:absolute
@@ -371,11 +375,59 @@
         />
       </div>
     </div>
+    </Container>
   </Section>
 
   <Section>
-    <div class="flex bg-black">
-
+    <Container className="flex gap-4">
+      <div
+        class="flex flex-col  gap-3 items-center
+            max-w-80 py-8 px-5
+            bg-secBg rounded-2xl"
+    >
+      <Heading level={3}>Домовленість</Heading>
+      <p>
+        Цей документ визначає основні правила співпраці між
+        психологом та клієнтом, описує права та обов’язки
+        сторін, а також етичні принципи надання
+        психологічної допомоги. Він допомагає зрозуміти, як
+        відбуватиметься процес консультацій і що очікувати
+        від взаємодії.
+      </p>
+      <a href="/" class="self-start">Читати далі</a>
     </div>
+    <div
+      class="flex flex-col  gap-3 items-center
+          max-w-80 py-8 px-5
+          bg-secBg rounded-2xl"
+    >
+      <Heading level={3}
+        >Як підготуватися до консультації</Heading
+      >
+      <p>
+        Підготовка до консультації допомагає максимально
+        ефективно використати час сеансу. Тут описані
+        рекомендації, як сформулювати питання, підготувати
+        власні думки та очікування, а також як створити
+        комфортне середовище для роботи з психологом.
+      </p>
+      <a href="/" class="self-start">Читати далі</a>
+    </div>
+    <div
+      class="flex flex-col  gap-3 items-center
+          max-w-80 py-8 px-5
+          bg-secBg rounded-2xl"
+    >
+      <Heading level={3}>Вартість і оплата</Heading>
+      <p>
+        У цьому розділі детально описані тарифи на
+        психологічні послуги, можливі способи оплати, умови
+        скасування та перенесення сеансів. Це допомагає
+        клієнту планувати консультації та уникати
+        непорозумінь щодо фінансових питань.
+      </p>
+      <a href="/" class="self-start">Читати далі</a>
+    </div>
+    </Container>
   </Section>
 </Main>

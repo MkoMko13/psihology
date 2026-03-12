@@ -3,7 +3,7 @@
 // import typography from '@tailwindcss/typography';
 
 export default {
-  content: ['./src/**/*.{html,js,svelte,ts,css, scss}'],
+  content: ['./src/**/*.{html,js,svelte,ts,css,scss}'],
   corePlugins: {
     preflight: false,
   },
@@ -16,6 +16,7 @@ export default {
         secondaryLight: '#6d7a66',
         darkBg: '#1E5459',
         lightBg: '#EFF2F6',
+        secBg: '#E3D7C1',
 
         // tertiary: 'var(--bg-tertiary)',
         // elevated: 'var(--bg-elevated)',
@@ -38,7 +39,7 @@ export default {
 
         // --- Основні фонові кольори (Backgrounds) ---
         // Світлий м'ятний фон усього сайту та карток
-        'page-bg': '#B2DFDB',
+        'pageBg': '#B2DFDB',
 
         // --- Текстові кольори (Content) ---
         // Дуже темний зелений для основного тексту та меню (близько до чорного)

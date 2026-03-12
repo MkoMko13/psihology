@@ -11,20 +11,21 @@
   let {
     accordTitle = 'Default Title',
     items = [],
+    className= '',
   } = $props<{
     accordTitle?: string;
     items: AccordionItem[];
-    variant?: string;
+    className?: string;
   }>();
 </script>
 
 <Accordion.Root
   type="single"
-  class="relative"
+  class={`relative ${className}`}
 >
   <Accordion.Item
     value="item-1"
-    class="border-neutral-200 bg-white shadow-sm"
+    class="border-neutral-200"
   >
     <Accordion.Header class="flex justify-center">
       <Accordion.Trigger

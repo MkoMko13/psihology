@@ -6,11 +6,10 @@
     className = '',
     children,
   }: { className?: string; children?: Snippet } = $props();
-
 </script>
 
-<section
-  class={`flex flex-col items-center py-20 px-10 ${className.trim()}`}
+<div
+  class={`max-w-screen-xl ${className.trim()}`}
 >
   {@render children?.()}
-</section>
+</div>
