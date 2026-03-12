@@ -1,7 +1,12 @@
-<script>
-  const { children = () => null } = $props();
+<script lang="ts">
+  import type { Snippet } from "svelte";
+
+  const { id = "", children }: {
+    id?: string;
+    children?: Snippet;
+  } = $props();
 </script>
 
-<main class="pt-[136px]">
-  {@render children()}
+<main {id} class="pt-[136px]">
+  {@render children?.()}
 </main>

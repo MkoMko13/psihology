@@ -179,8 +179,8 @@
   };
 </script>
 
-<Main>
-  <Section
+<Main id="main">
+  <Section 
     className="relative overflow-hidden
       before:z-1
       before:content-['']
@@ -250,7 +250,7 @@
     </div>
   </Section>
 
-  <Section className="bg-lightBg">
+  <Section id="education" className="bg-lightBg">
     <Heading level={2} className="mb-8">Освіта</Heading>
     <div
       class="flex flex-wrap items-center justify-center gap-5
@@ -380,7 +380,7 @@
     </Container>
   </Section>
 
-  <Section>
+  <Section id="consultation">
     <Container className="flex gap-4">
       <div
         class="flex flex-col gap-3 items-center
@@ -396,7 +396,7 @@
           як відбуватиметься процес консультацій і що
           очікувати від взаємодії.
         </p>
-        <a href={`${base}/`} class="self-start"
+        <a href={`${base}/`} class="self-start mt-auto"
           >Читати далі</a
         >
       </div>
@@ -415,7 +415,7 @@
           власні думки та очікування, а також як створити
           комфортне середовище для роботи з психологом.
         </p>
-        <a href={`${base}/`} class="self-start"
+        <a href={`${base}/`} class="self-start mt-auto"
           >Читати далі</a
         >
       </div>
@@ -432,7 +432,7 @@
           допомагає клієнту планувати консультації та
           уникати непорозумінь щодо фінансових питань.
         </p>
-        <a href={`${base}/`} class="self-start"
+        <a href={`${base}/`} class="self-start mt-auto"
           >Читати далі</a
         >
       </div>
