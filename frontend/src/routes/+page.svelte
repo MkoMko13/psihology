@@ -346,7 +346,7 @@
     <Container>
       <Heading level={2} className="mb-8">Досвід</Heading>
       <div
-        class="flex flex-wrap justify-center gap-20 items-center max-w-screen-xl"
+        class="flex flex-wrap justify-center gap-15 items-center max-w-screen-xl"
       >
         <ul class="flex flex-col gap-3 max-w-[600px]">
           <ListItem
@@ -359,7 +359,7 @@
           />
         </ul>
         <div
-          class="relative overflow-hidden max-w-100
+          class="relative  max-w-100
           before:-z-10
           before:content-['']
           before:absolute
