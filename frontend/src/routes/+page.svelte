@@ -11,12 +11,20 @@
   import Heading from '$shared/ui/typography/Heading.svelte';
   import BaseButton from '$shared/ui/buttons/BaseButton.svelte';
   import ListItem from '$shared/ui/ListItem.svelte';
+  import { docsSlides } from '$lib/assets/docs';
+  import Section from '$shared/ui/typography/Section.svelte';
+  // Types
   import type {
     GalleryItem,
     ProductGalleryFeatures,
   } from '$shared/config';
-  import { docsSlides } from '$lib/assets/docs';
-  import Section from '$shared/ui/typography/Section.svelte';
+
+  // ICONS
+  import {
+    GraduationCap,
+    BookOpen,
+    School,
+  } from '@lucide/svelte';
 
   // DATA
   // PhotoSwipe
@@ -159,54 +167,83 @@
       '2024-2025 магістратура Український державнийуніверситет ім. М. Драгоманова; факультет спеціальної та інклюзивної освіти, кафедра спеціальної психології та медицини, освітня програма “Клінічний психолог”',
     ],
   };
+  // Experiens DATA
+  const experiensContent = {
+    listItems: [
+      'з вересня 2023 – операторка і психологиня чат-бота Unsee (онлайн-механізму подання повідомлень для боротьби з онлайн-насильством щодо/серед дітей) у проєкті “Розширення можливостей правоохоронних органів у подоланні насильства щодо дітей в Інтернеті”, який впроваджується ВБО “Український фонд “Благополуччя дітей” за фінансової підтримки Європейського Союзу;',
+
+      'червень 2023-серпень 2023 – тренерка із психосоціальної підтримки при гендерно зумовленому насильстві в проєкті “Впровадження для фахівців сфери охорони здоров’я та соціальних працівників в Житомирській області освітніх та тренінгових програм для подолання психосоціальних та медичних травм у жертв сексуального насильства/ПТСР”, який реалізується ГО “ЖІКЦ” за підтримки Посольства Фінляндії в Україні.',
+    ],
+    icons: [GraduationCap, BookOpen, School],
+  };
 </script>
 
 <Main>
-  <Section>
+  <Section
+    className="relative
+      before:-z-1
+      before:content-['']
+      before:absolute
+      before:-top-10
+      before:-left-95
+      before:w-[50%] before:h-[100%]
+      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[25deg]"
+  >
     <div
-      class="relative z-1
-        flex flex-col items-center gap-3
-        w-full max-w-[700px]"
+      class="mydiv
+      before:-z-1
+      before:content-['']
+      before:absolute
+      before:-top-0
+      before:-right-70
+      before:w-[50%] before:h-[100%]
+      before:bg-[url('/images/bg/lines.png')] before:bg-no-repeat before:rotate-[-25deg]"
     >
       <div
-        style={`background-image: url('${base}/images/bg/peace.png');`}
-        class="flex flex-col items-center justify-center gap-2
+        class="relative z-1
+        flex flex-col items-center gap-3
+        w-full max-w-[700px]"
+      >
+        <div
+          style={`background-image: url('${base}/images/bg/peace.png');`}
+          class="flex flex-col items-center justify-center gap-2
           w-full min-h-[300px]
           font-bold text-center
           border rounded-xl
           text-content-primary
           bg-cover bg-top"
-      ></div>
-      <div
-        class="flex flex-col items-center gap-3 text-center"
-      >
-        <p
-          class="odd:text-black even:text-secondaryLight font-bold text-base"
+        ></div>
+        <div
+          class="flex flex-col items-center gap-3 text-center"
         >
-          ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН У
-          ЖИТТІ?!
-        </p>
-        <p
-          class="odd:text-black even:text-secondaryLight font-bold text-sm"
-        >
-          ВАШІ ДУМКИ, ЕМОЦІЇ, ВІДЧУТТЯ У ТІЛІ ТА ПОВЕДІНКА —
-          УСЕ ЦЕ ВЗАЄМОПОВ’ЯЗАНО!
-        </p>
-        <p
-          class="odd:text-black even:text-secondaryLight font-bold text-sm"
-        >
-          ЗАПИШІТЬСЯ НА КОНСУЛЬТАЦІЮ ДО МЕНЕ, ПСИХОЛОГИНІ,
-          ЯКА КОНСУЛЬТУЄ У МЕТОДІ КОГНІТИВНО-ПОВЕДІНКОВОЇ
-          ТЕРАПІЇ НИЗЬКОЇ ІНТЕНСИВНОСТІ
-        </p>
-        <p
-          class="odd:text-black even:text-secondaryLight font-bold text-base"
-        >
-          ПОЧНІТЬ ТВОРИТИ СВОЄ ЩАСЛИВЕ СЬОГОДНІ!
-        </p>
-        <BaseButton size="lg"
-          >Записатися на консультацію</BaseButton
-        >
+          <p
+            class="odd:text-black even:text-secondaryLight font-bold text-base"
+          >
+            ВІДЧУВАЄТЕ, ЩОСЬ НЕ ТАК… ХОЧЕТЕ ПОЗИТИВНИХ ЗМІН
+            У ЖИТТІ?!
+          </p>
+          <p
+            class="odd:text-black even:text-secondaryLight font-bold text-sm"
+          >
+            ВАШІ ДУМКИ, ЕМОЦІЇ, ВІДЧУТТЯ У ТІЛІ ТА ПОВЕДІНКА
+            — УСЕ ЦЕ ВЗАЄМОПОВ’ЯЗАНО!
+          </p>
+          <p
+            class="odd:text-black even:text-secondaryLight font-bold text-sm"
+          >
+            ЗАПИШІТЬСЯ НА КОНСУЛЬТАЦІЮ ДО МЕНЕ, ПСИХОЛОГИНІ,
+            ЯКА КОНСУЛЬТУЄ У МЕТОДІ КОГНІТИВНО-ПОВЕДІНКОВОЇ
+            ТЕРАПІЇ НИЗЬКОЇ ІНТЕНСИВНОСТІ
+          </p>
+          <p
+            class="odd:text-black even:text-secondaryLight font-bold text-base"
+          >
+            ПОЧНІТЬ ТВОРИТИ СВОЄ ЩАСЛИВЕ СЬОГОДНІ!
+          </p>
+          <BaseButton size="lg"
+            >Записатися на консультацію</BaseButton
+          >
+        </div>
       </div>
     </div>
   </Section>
@@ -273,9 +310,9 @@
           children={educationContent.text}
           direction="left"
           gap={20}
-          {icons}
+          // {icons}
         />
-      </ul>     
+      </ul>
 
       <BitAccordion
         accordTitle="Детальніше про освіту"
@@ -303,6 +340,42 @@
   </Section>
 
   <Section>
-    <Heading level={2}>Досвід</Heading>
+    <Heading level={2} className="mb-8">Досвід</Heading>
+    <div class="flex gap-20 items-center max-w-screen-xl">
+      <ul class="flex flex-col gap-3 max-w-[600px]">
+        <ListItem
+          children={experiensContent.listItems}
+          icons={experiensContent.icons}
+          direction="left"
+          className="bg-lightBg rounded-xl px-5 py-2"
+          iconSize={75}
+          gap={25}
+        />
+      </ul>
+      <div
+        class="relative
+          before:-z-10
+          before:content-['']
+          before:absolute
+          before:-right-6 before:-bottom-6
+          before:w-[100%] before:h-full
+          before:bg-gradient-to-b before:from-[#BCA66D] before:via-white before:to-[#BCA66D]
+          before:rounded-full
+          before:shadow-[0_0_10px_rgba(0,0,0,0.55)]
+          before:rounded-tl-[50%] before:rounded-bl-[50%] before:rounded-tr-[50px] before:rounded-br-[50px]"
+      >
+        <img
+          alt=""
+          src={`${base}/images/Natalia_Sukhachova.jpg`}
+          class="rounded-tl-[100%] rounded-bl-[110%] rounded-tr-[120px] rounded-br-[120px]"
+        />
+      </div>
+    </div>
+  </Section>
+
+  <Section>
+    <div class="flex bg-black">
+
+    </div>
   </Section>
 </Main>

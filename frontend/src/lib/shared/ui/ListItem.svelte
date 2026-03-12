@@ -1,5 +1,8 @@
 <script lang="ts">
+  import type { Component } from 'svelte';
+
   type IconPosition = 'top' | 'right' | 'bottom' | 'left';
+  type IconType = string | Component<Record<string, any>>;
 
   let {
     children = [],
@@ -7,12 +10,14 @@
     direction = 'top' as IconPosition,
     gap = 8,
     className = '',
+    iconSize = 20,
   }: {
     children?: string[];
-    icons?: string[];
+    icons?: IconType[];
     direction?: IconPosition;
     gap?: number;
     className?: string;
+    iconSize?: Number;
   } = $props();
 
   const classesMap: Record<IconPosition, string> = {
@@ -24,16 +29,23 @@
 </script>
 
 {#each children as paragraph, i}
-  {#if icons}
-    <li
-      class={`${classesMap[direction] ?? classesMap['top']} ${className}`.trim()}
-      style="gap: {gap ?? 8}px;"
-    >
-      <span>{icons[i]}</span>
+  <li
+    class={`${classesMap[direction] ?? classesMap.top} ${className}`.trim()}
+    style="gap: {gap ?? 8}px;"
+  >
+    {#if icons?.[i]}
+      <span>
+        {#if typeof icons[i] === 'string'}
+          {icons[i]}
+        {:else}
+          {@const Icon = icons[i]}
+          <Icon size={iconSize} aria-hidden="true" />
+        {/if}
+      </span>
+    {/if}
 
-      <p class="before:content-['☘︎'] before:mr-1">
-        {paragraph}
-      </p>
-    </li>
-  {/if}
+    <p class="before:content-['☘︎'] before:mr-1">
+      {paragraph}
+    </p>
+  </li>
 {/each}
